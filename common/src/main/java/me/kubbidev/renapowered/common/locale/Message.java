@@ -139,8 +139,10 @@ public interface Message {
     );
 
     Args0 COMMAND_EXCEPTION_TRACE_MESSAGE = () -> text()
-            // "&cException whilst executing command:"
+            // "&c:warning:Exception whilst executing command:"
             .color(RED)
+            .append(text(Emote.WARNING.toString()))
+            .append(space())
             .append(text("**"))
             .append(translatable("renapowered.commandsystem.trace.message"))
             .append(text(":**"))

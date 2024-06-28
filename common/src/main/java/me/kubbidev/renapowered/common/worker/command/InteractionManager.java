@@ -168,8 +168,9 @@ public class InteractionManager extends DiscordEventListener {
         trace.add(Message.COMMAND_EXCEPTION_TRACE_MESSAGE.build());
         trace.add(Component.text("```"));
 
+        trace.add(Component.text(e.getMessage()));
         Consumer<StackTraceElement> printer = StackTracePrinter.elementToString(str ->
-                trace.add(Component.text(str))
+                trace.add(Component.text("  at " + str))
         );
 
         int overflow = CHAT_UNFILTERED_PRINTER.process(e.getStackTrace(), printer);
