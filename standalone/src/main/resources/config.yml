@@ -60,7 +60,7 @@ application:
 #   |=> Custom
 #
 # - A MongoDB database is the default option.
-storage-method: h2
+storage-method: MongoDB
 
 # The following block defines the settings for remote database storage methods.
 #
