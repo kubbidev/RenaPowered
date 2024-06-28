@@ -63,9 +63,6 @@ application:
 storage-method: MongoDB
 
 # The following block defines the settings for remote database storage methods.
-#
-# - You don't need to touch any of the settings here if you're using a local storage method!
-# - The connection detail options are shared between all remote storage types.
 data:
 
   # Define the address and port for the database.
