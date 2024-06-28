@@ -54,9 +54,10 @@ public class MemberListener extends DiscordEventListener {
                 && oldStatus != OnlineStatus.INVISIBLE) {
 
             // event are executed multiple times for each mutual guild, we want this only once at least per minute
-            if (!this.statusCache.add(user.getIdLong())) {
+            if (this.statusCache.contains(user.getIdLong())) {
                 return;
             }
+            this.statusCache.add(user.getIdLong());
             UserEntity userEntity = StandardUserManager.fetch(this.plugin, user);
             userEntity.setLastSeen(System.currentTimeMillis());
 

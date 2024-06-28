@@ -82,10 +82,10 @@ public class RankingService extends ScheduledTask implements AutoCloseable {
                 member.getGuild().getIdLong()
         );
 
-        if (!this.cooldowns.add(uuid)) {
+        if (this.cooldowns.contains(uuid)) {
             return;
         }
-
+        this.cooldowns.add(uuid);
         MemberEntity memberEntity = StandardMemberManager.fetch(this.plugin, member);
 
         long gainedExp = random.nextLong(15, 25) * TEXT_MULTIPLIER;

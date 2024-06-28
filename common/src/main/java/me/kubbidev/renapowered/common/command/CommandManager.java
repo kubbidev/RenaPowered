@@ -45,7 +45,7 @@ public class CommandManager {
             .build()
     );
     private final AtomicBoolean executingCommand = new AtomicBoolean(false);
-    private final ExpiringSet<UUID> playerRateLimit = new ExpiringSet<>(500, TimeUnit.MILLISECONDS);
+    private final ExpiringSet<UUID> userRateLimit = new ExpiringSet<>(500, TimeUnit.MILLISECONDS);
 
     @Getter(onMethod_ = @VisibleForTesting)
     private final Map<String, Command<?>> mainCommands;
@@ -66,8 +66,8 @@ public class CommandManager {
 
     public CompletableFuture<Void> executeCommand(Sender sender, String label, List<String> args) {
         UUID uniqueId = sender.getUniqueId();
-        if (this.plugin.getConfiguration().get(ConfigKeys.COMMANDS_RATE_LIMIT) && !sender.isConsole() && !this.playerRateLimit.add(uniqueId)) {
-            this.plugin.getLogger().warn("Player '" + uniqueId + "' is spamming RenaPowered commands. Ignoring further inputs.");
+        if (this.plugin.getConfiguration().get(ConfigKeys.COMMANDS_RATE_LIMIT) && !sender.isConsole() && !this.userRateLimit.add(uniqueId)) {
+            this.plugin.getLogger().warn("User '" + uniqueId + "' is spamming RenaPowered commands. Ignoring further inputs.");
             return CompletableFuture.completedFuture(null);
         }
 

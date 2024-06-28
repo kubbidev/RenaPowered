@@ -41,11 +41,11 @@ public class SuggestionCommand implements InteractionCommand {
                 context.getGuild().getIdLong()
         );
 
-        if (!this.cooldowns.add(uuid)) {
+        if (this.cooldowns.contains(uuid)) {
             context.reply(context.deferReply(true), Message.SUGGESTION_IN_COOLDOWN.build());
             return;
         }
-
+        this.cooldowns.add(uuid);
         GuildEntity guildEntity = StandardGuildManager.fetch(
                 context.getPlugin(),
                 context.getGuild()
