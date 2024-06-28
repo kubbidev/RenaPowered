@@ -24,9 +24,9 @@ public class CEmbed {
     protected final List<CField> fields = new ArrayList<>(25);
     protected int color = 0x1FFFFFFF;
 
-    protected Component title = Component.empty();
+    protected Component title;
     protected String url;
-    protected Component description = Component.empty();
+    protected Component description;
 
     protected OffsetDateTime timestamp;
 
@@ -145,7 +145,7 @@ public class CEmbed {
 
     public MessageEmbed build(@Nullable Locale locale) {
         synchronized (this.mutex) {
-            Function<Component, String> toString = c -> ComponentSerializer.serialize(c, locale);
+            Function<Component, String> toString = c -> c == null ? null : ComponentSerializer.serialize(c, locale);
 
             String t = toString.apply(this.title);
             String d = toString.apply(this.description);
