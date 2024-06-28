@@ -1,0 +1,117 @@
+####################################################################################################
+# +----------------------------------------------------------------------------------------------+ #
+# |                       __   ___       __   __   ___          ___  __   __                     | #
+# |                      |__) |__  |\ | |__| |__) /   \ \    / |__  |__) |  \                    | #
+# |                      |  \ |___ | \| |  | |    \___/  \/\/  |___ |  \ |__/                    | #
+# |                                                                                              | #
+# |                                     https://kubbidev.com                                     | #
+# |                                                                                              | #
+# |  DISCORD:     https://discord.kubbidev.com                                                   | #
+# |  BUG REPORTS: https://github.com/kubbidev/RenaPowered/issues                                 | #
+# |                                                                                              | #
+# |  New options are not added to this file automatically. Default values are used if an         | #
+# |  option cannot be found.                                                                     | #
+# +----------------------------------------------------------------------------------------------+ #
+####################################################################################################
+
+# +----------------------------------------------------------------------------------------------+ #
+# |                                                                                              | #
+# |                                      ESSENTIAL SETTINGS                                      | #
+# |                                                                                              | #
+# |                  Important settings that control how RenaPowered functions.                  | #
+# |                                                                                              | #
+# +----------------------------------------------------------------------------------------------+ #
+
+# The following block will determine all information related to the Discord application.
+#
+# - You may need to change these value to make the application run properly.
+application:
+
+  # The Discord application authentication token used to connect.
+  #
+  # - This configuration key is the most important and will determine which
+  #   Discord application will be used when starting this application.
+  authentication-token: ''
+
+  # The amount of shard that will be use to shard the Discord application.
+  #
+  # - Scale this amount to the number of guilds your application is used on.
+  total-shards: 1
+
+
+
+
+# +----------------------------------------------------------------------------------------------+ #
+# |                                                                                              | #
+# |                                       STORAGE SETTINGS                                       | #
+# |                                                                                              | #
+# |               Controls which storage method RenaPowered will use to store data.              | #
+# |                                                                                              | #
+# +----------------------------------------------------------------------------------------------+ #
+
+# How the plugin should store data
+#
+# - Possible options:
+#
+#   |  Remote databases - require connection information to be configured below
+#   |=> MongoDB
+#
+#   |  Other databases
+#   |=> Custom
+#
+# - A MongoDB database is the default option.
+storage-method: h2
+
+# The following block defines the settings for remote database storage methods.
+#
+# - You don't need to touch any of the settings here if you're using a local storage method!
+# - The connection detail options are shared between all remote storage types.
+data:
+
+  # Define the address and port for the database.
+  # - The standard DB engine port is used by default
+  #   (MongoDB: 27017)
+  # - Specify as "host:port" if differs
+  address: localhost
+
+  # The name of the database to store RenaPowered data in.
+  # - This must be created already.
+  database: discord
+
+  # Credentials for the database.
+  username: root
+  password: ''
+
+  # The prefix to use for all RenaPowered MongoDB collections.
+  #
+  # - This only applies for the MongoDB storage type.
+  # - Change this if you want to use different collections for different servers. The default is no
+  # prefix.
+  mongodb-collection-prefix: ''
+
+  # The connection string URI to use to connect to the MongoDB instance.
+  #
+  # - When configured, this setting will override anything defined in the address, database,
+  #   username or password fields above.
+  # - If you have a connection string that starts with 'mongodb://' or 'mongodb+srv://', enter it
+  #   below.
+  # - For more information, please see https://docs.mongodb.com/manual/reference/connection-string/
+  mongodb-connection-uri: ''
+
+
+
+
+# +----------------------------------------------------------------------------------------------+ #
+# |                                                                                              | #
+# |                                     UPDATE PROPAGATION                                       | #
+# |                                                                                              | #
+# |   Controls the ways in which RenaPowered will sync data & notify other servers of changes.   | #
+# |                                                                                              | #
+# +----------------------------------------------------------------------------------------------+ #
+
+# This option controls how frequently RenaPowered will perform a sync task.
+#
+# - A sync task will refresh all data from the storage, and ensure that the most up-to-date data is
+#   being used by the application.
+# - Set to -1 to disable the task completely.
+sync-minutes: 30
