@@ -27,7 +27,7 @@ public class StandaloneLoader implements ShutdownCallback {
     public static final Logger LOGGER = LogManager.getLogger(StandaloneLoader.class);
 
     private static final String JAR_NAME = "renapowered-standalone.jarinjar";
-    private static final String BOOTSTRAP_PLUGIN_CLASS = "me.kubbidev.renapowered.standalone.PStandaloneBootstrap";
+    private static final String BOOTSTRAP_PLUGIN_CLASS = "me.kubbidev.renapowered.standalone.RStandaloneBootstrap";
     private static final String BOOTSTRAP_DEPENDENCY_PRELOADER_CLASS = "me.kubbidev.renapowered.standalone.StandaloneDependencyPreloader";
 
     private RenaApplication app;
