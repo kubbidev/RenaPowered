@@ -138,6 +138,24 @@ public interface Message {
             .color(GRAY)
     );
 
+    Args0 COMMAND_EXCEPTION_TRACE_MESSAGE = () -> text()
+            // "&cException whilst executing command:"
+            .color(RED)
+            .append(text("**"))
+            .append(translatable("renapowered.commandsystem.trace.message"))
+            .append(text(":**"))
+            .build();
+
+    Args1<Integer> COMMAND_EXCEPTION_TRACE_OVERFLOW = overflow -> text()
+            // "&f... and {} more"
+            .color(WHITE)
+            .content("... ")
+            .append(translatable()
+                    .key("renapowered.commandsystem.trace.overflow")
+                    .args(text(overflow))
+            )
+            .build();
+
     Args1<String> EXPORT_LOG = msg -> prefixed(text()
             // "&3EXPORT &3&l> &f{}"
             .append(translatable("renapowered.logs.export-prefix", DARK_AQUA))

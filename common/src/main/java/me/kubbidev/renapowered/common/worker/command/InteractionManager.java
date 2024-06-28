@@ -7,6 +7,7 @@ import me.kubbidev.renapowered.common.locale.Message;
 import me.kubbidev.renapowered.common.plugin.RenaPlugin;
 import me.kubbidev.renapowered.common.plugin.scheduler.SchedulerAdapter;
 import me.kubbidev.renapowered.common.plugin.scheduler.SchedulerTask;
+import me.kubbidev.renapowered.common.util.ComponentSerializer;
 import me.kubbidev.renapowered.common.util.ImmutableCollectors;
 import me.kubbidev.renapowered.common.worker.commands.*;
 import me.kubbidev.renapowered.common.worker.commands.ranking.RChannelCommand;
@@ -16,25 +17,27 @@ import me.kubbidev.renapowered.common.worker.commands.suggestion.SChannelCommand
 import me.kubbidev.renapowered.common.worker.commands.suggestion.SDisapproveCommand;
 import me.kubbidev.renapowered.common.worker.event.EventHandler;
 import me.kubbidev.renapowered.common.worker.listener.DiscordEventListener;
+import me.kubbidev.renapowered.common.util.StackTracePrinter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.JoinConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -45,6 +48,14 @@ public class InteractionManager extends DiscordEventListener {
             .setNameFormat("renapowered-interaction-executor")
             .build()
     );
+
+    // how many lines should we include in each stack trace send as a message
+    private static final int STACK_TRUNCATION = 15;
+
+    private static final StackTracePrinter CHAT_UNFILTERED_PRINTER = StackTracePrinter.builder()
+            .truncateLength(STACK_TRUNCATION)
+            .build();
+
     private final AtomicBoolean executingCommand = new AtomicBoolean(false);
 
     @Getter(onMethod_ = @VisibleForTesting)
@@ -126,6 +137,7 @@ public class InteractionManager extends DiscordEventListener {
             try {
                 executeCommand(interaction, guildLocale, label);
             } catch (Throwable e) {
+                sendCommandTrace(interaction, guildLocale, e);
                 // catch any exception
                 this.plugin.getLogger().severe("Exception whilst executing command: " + label, e);
             } finally {
@@ -149,6 +161,28 @@ public class InteractionManager extends DiscordEventListener {
         }, 10, TimeUnit.SECONDS));
 
         return future;
+    }
+
+    private void sendCommandTrace(CommandInteraction interaction, Locale guildLocale, Throwable e) {
+        List<ComponentLike> trace = new ArrayList<>();
+        trace.add(Message.COMMAND_EXCEPTION_TRACE_MESSAGE.build());
+        trace.add(Component.text("```"));
+
+        Consumer<StackTraceElement> printer = StackTracePrinter.elementToString(str ->
+                trace.add(Component.text(str))
+        );
+
+        int overflow = CHAT_UNFILTERED_PRINTER.process(e.getStackTrace(), printer);
+        if (overflow != 0) {
+            trace.add(Message.COMMAND_EXCEPTION_TRACE_OVERFLOW.build(overflow));
+        }
+        trace.add(Component.text("```"));
+        Component stackTrace = Component.join(JoinConfiguration.newlines(), trace);
+
+        interaction.deferReply(true).queue(hook -> this.plugin.getDiscordService().sendMessageSilent(
+                hook::sendMessage,
+                ComponentSerializer.serialize(stackTrace, guildLocale)
+        ));
     }
 
     private void handleCommandTimeout(AtomicReference<Thread> thread, String label) {
