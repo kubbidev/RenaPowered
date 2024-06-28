@@ -23,7 +23,6 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class MongoStorage implements StorageImplementation {
     private final RenaPlugin plugin;
@@ -224,9 +223,11 @@ public class MongoStorage implements StorageImplementation {
     }
 
     private static MongoData fillMongoData(MongoEntity entity, Document d) {
-        Map<String, Object> objectMap = entity.getColumnList().stream().map(MongoColumn::name)
-                .collect(Collectors.toMap(n -> n, d::get, (a, b) -> b));
+        Map<String, Object> objectMap = new HashMap<>();
 
+        for (MongoColumn mongoColumn : entity.getColumnList()) {
+            objectMap.put(mongoColumn.name(), d.get(mongoColumn.name()));
+        }
         return new MongoData(objectMap);
     }
 
