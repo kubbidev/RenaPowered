@@ -33,8 +33,8 @@ public class CEmbed {
     protected String thumbnail;
     protected String image;
 
-    protected CAuthor author;
-    protected CFooter footer;
+    protected CAuthor author = new CAuthor();
+    protected CFooter footer = new CFooter();
 
     private final Object[] mutex = new Object[0];
 
@@ -127,6 +127,10 @@ public class CEmbed {
     public static class CFooter {
         private final Component text;
         private final String iconUrl;
+
+        public CFooter() {
+            this(null, null);
+        }
     }
 
     @AllArgsConstructor
@@ -134,6 +138,10 @@ public class CEmbed {
         private final Component name;
         private final String url;
         private final String iconUrl;
+
+        public CAuthor() {
+            this(null, null, null);
+        }
     }
 
     @AllArgsConstructor
