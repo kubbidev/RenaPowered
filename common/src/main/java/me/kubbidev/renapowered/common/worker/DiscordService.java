@@ -94,11 +94,6 @@ public class DiscordService extends DiscordEventListener implements AutoCloseabl
 
     private void registerPlatformListeners() {
         this.shardManager.addEventListener(getInteractionManager());
-
-        this.birthdayService = new BirthdayService(this.plugin);
-        this.birthdayService.schedule();
-
-        this.shardManager.addEventListener(this.birthdayService);
         this.shardManager.addEventListener(new ActivityListener(this.plugin));
         this.shardManager.addEventListener(new MemberListener(this.plugin));
     }
@@ -130,6 +125,9 @@ public class DiscordService extends DiscordEventListener implements AutoCloseabl
 
         this.rankingService = new RankingService(this.plugin);
         this.rankingService.schedule();
+
+        this.birthdayService = new BirthdayService(this.plugin);
+        this.birthdayService.schedule();
     }
 
     @Override
