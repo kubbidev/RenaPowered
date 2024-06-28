@@ -176,7 +176,7 @@ public enum Dependency {
             "net{}dv8tion",
             "JDA",
             "5.0.0-beta.24",
-            "7jm6WCpXpv1aexWftgHbWRLdoyjAhMBnge+Av8aAnbo=",
+            "Az4P6A3Iyos6psCRJFDK3igTNAmw1pXo8E/uhOcPazQ=",
             Relocation.of(RelocationHelper.OKHTTP3_STRING, RelocationHelper.OKHTTP3_STRING),
             Relocation.of(RelocationHelper.OKIO_STRING, RelocationHelper.OKIO_STRING),
             Relocation.of("collections4", "org{}apache{}commons{}collections4"),
