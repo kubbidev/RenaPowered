@@ -16,10 +16,7 @@ import net.dv8tion.jda.api.hooks.IEventManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class EventManager implements IEventManager {
     private final RenaPlugin plugin;
@@ -28,7 +25,7 @@ public class EventManager implements IEventManager {
             .setNameFormat("renapowered-event-executor")
             .build()
     );
-    private final List<EventListener> listeners = new ArrayList<>();
+    private final List<EventListener> listeners = new CopyOnWriteArrayList<>();
 
     /**
      * A map of factory for the creation and caching of filters and creation of filter chains.
@@ -116,7 +113,7 @@ public class EventManager implements IEventManager {
             dispatchChain((MessageReceivedEvent) event);
         }
 
-        for (EventListener listener : listeners) {
+        for (EventListener listener : this.listeners) {
             try {
                 listener.onEvent(event);
             } catch (Throwable throwable) {
