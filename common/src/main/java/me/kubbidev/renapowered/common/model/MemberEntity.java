@@ -12,7 +12,7 @@ import java.util.UUID;
 @Entity(name = "member")
 public class MemberEntity implements BaseEntity {
 
-    @Entry(name = "uuid")
+    @Entry(name = "_id")
     private final UUID id;
 
     @Getter
