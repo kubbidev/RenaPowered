@@ -666,37 +666,39 @@ public interface Message {
                 ? translatable("renapowered.command.profile.last-seen.online")
                 : text("<t:" + Instant.ofEpochMilli(lastSeenMillis).getEpochSecond() + ":R>");
 
+        Component activities;
         if (activitiesMap.isEmpty()) {
-            return Component.translatable("renapowered.command.profile.activity.empty");
+            activities = Component.translatable("renapowered.command.profile.activity.empty");
+        } else {
+            Map<Component, String> activitiesFormatted = activitiesMap.entrySet().stream()
+                    .filter(a -> a.getKey() != Activity.ActivityType.CUSTOM_STATUS)
+                    .collect(ImmutableCollectors.toMap(
+                            entry -> {
+                                String activityKey = "renapowered.command.profile.activity."
+                                        + entry.getKey().name().toLowerCase(Locale.ROOT)
+                                        .replace("_", "-")
+                                        .replace(" ", "-");
+                                return Component.translatable(activityKey);
+                            },
+                            entry -> entry.getValue().stream()
+                                    .map(activity -> {
+                                        String activityName = activity.getName();
+                                        String activityUrl = activity.getUrl();
+                                        if (activityUrl != null) {
+                                            activityName = "[" + activityName + "](" + activityUrl + ")";
+                                        }
+                                        return activityName;
+                                    })
+                                    .collect(Collectors.joining(", "))
+                    ));
+            TextComponent.Builder builder = Component.text();
+            activitiesFormatted.forEach((key, value) -> {
+                builder.append(Component.text("- **")).append(key);
+                builder.append(Component.text(":** ")).append(Component.text(value));
+                builder.append(Component.newline());
+            });
+            activities = builder.build();
         }
-
-        Map<Component, String> activitiesFormatted = activitiesMap.entrySet().stream()
-                .collect(ImmutableCollectors.toMap(
-                        entry -> {
-                            String activityKey = "renapowered.command.profile.activity."
-                                    + entry.getKey().name().toLowerCase(Locale.ROOT)
-                                    .replace("_", "-")
-                                    .replace(" ", "-");
-                            return Component.translatable(activityKey);
-                        },
-                        entry -> entry.getValue().stream()
-                                .map(activity -> {
-                                    String activityName = activity.getName();
-                                    String activityUrl = activity.getUrl();
-                                    if (activityUrl != null) {
-                                        activityName = "[" + activityName + "](" + activityUrl + ")";
-                                    }
-                                    return activityName;
-                                })
-                                .collect(Collectors.joining(", "))
-                ));
-        TextComponent.Builder activities = Component.text();
-        activitiesFormatted.forEach((key, value) -> {
-            activities.append(Component.text("- **")).append(key);
-            activities.append(Component.text(":** ")).append(Component.text(value));
-            activities.append(Component.newline());
-        });
-
         return text()
                 // > You can add here some useful info about yourself using {} command
                 //
