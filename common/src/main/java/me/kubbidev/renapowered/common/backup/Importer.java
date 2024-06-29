@@ -75,11 +75,7 @@ public class Importer implements Runnable {
         }
     }
 
-    private void parseExportData(
-            Map<Long, UserData> users,
-            Map<Long, GuildData> guilds,
-            Map<UUID, MemberData> members) {
-
+    private void parseExportData(Map<Long, UserData> users, Map<Long, GuildData> guilds, Map<UUID, MemberData> members) {
         for (Map.Entry<String, JsonElement> guild : getDataSection("guilds")) {
             JsonObject jsonData = guild.getValue().getAsJsonObject();
             String iconUrl = null;
