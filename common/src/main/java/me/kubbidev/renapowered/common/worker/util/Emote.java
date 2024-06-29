@@ -6,17 +6,17 @@ public enum Emote {
     // animated emotes,
 
     // static emotes,
-    RED_TRIANGLE(  "red_triangle",   "1212815305798066246", false),
-    GREEN_TRIANGLE("green_triangle", "1212815306876264458", false),
-    EQUAL(         "equal",          "1212815304661532752", false),
-    EMPTY(         "empty",          "1212815303281475584", false),
+    RED_TRIANGLE(  "red_triangle",   "1256401129470820503", false),
+    GREEN_TRIANGLE("green_triangle", "1256401158935674991", false),
+    EQUAL(         "equal",          "1256401174173843518", false),
+    EMPTY(         "empty",          "1256401190401474600", false),
 
     // online status
-    ONLINE(        "online",         "1214370045287989258", false),
-    IDLE(          "idle",           "1214370042180018256", false),
-    DO_NOT_DISTURB("dnb",            "1214370040871256124", false),
-    INVISIBLE(     "invisible",      "1214370043849351168", false),
-    OFFLINE(       "invisible",      "1214370043849351168", false),
+    ONLINE(        "online",         "1256401217370853386", false),
+    IDLE(          "idle",           "1256401228854857758", false),
+    DO_NOT_DISTURB("dnb",            "1256401247599071263", false),
+    INVISIBLE(     "invisible",      "1256401272089739264", false),
+    OFFLINE(       "invisible",      "1256401272089739264", false),
 
     // default emotes
     WHITE_CHECK_MARK(   "white_check_mark"),
