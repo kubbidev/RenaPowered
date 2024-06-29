@@ -48,8 +48,8 @@ public class RankingService extends ScheduledTask implements AutoCloseable {
 
     }
 
-    @InitialLocalDay(dayOfWeek = DayOfWeek.TUESDAY)
-    @InitialLocalTime(hour = 16, minute = 0, second = 0)
+    @InitialLocalDay(dayOfWeek = DayOfWeek.SUNDAY)
+    @InitialLocalTime(hour = 18, minute = 0, second = 0)
     @Override
     public void run() {
         Collection<? extends GuildEntity> entities =
