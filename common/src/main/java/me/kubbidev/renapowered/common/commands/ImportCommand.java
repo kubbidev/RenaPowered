@@ -1,4 +1,4 @@
-package me.kubbidev.renapowered.common.commands.misc;
+package me.kubbidev.renapowered.common.commands;
 
 import com.google.gson.JsonObject;
 import me.kubbidev.renapowered.common.backup.Importer;

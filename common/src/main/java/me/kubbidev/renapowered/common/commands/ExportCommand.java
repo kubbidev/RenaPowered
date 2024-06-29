@@ -1,4 +1,4 @@
-package me.kubbidev.renapowered.common.commands.misc;
+package me.kubbidev.renapowered.common.commands;
 
 import me.kubbidev.renapowered.common.backup.Exporter;
 import me.kubbidev.renapowered.common.command.abstraction.CommandException;
