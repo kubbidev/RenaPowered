@@ -14,6 +14,11 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The {@code RankingBuilder} class is used to build a ranking leaderboard.
+ * It provides methods to add entries to the leaderboard and generate an embed
+ * representing the leaderboard.
+ */
 public class RankingBuilder {
     private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
 
@@ -23,14 +28,29 @@ public class RankingBuilder {
     private final List<Entry> entries = new ArrayList<>(MAX_ENTRIES);
     private final RankingService rankingService;
 
+    /**
+     * Constructs a new {@code RankingBuilder} with the specified {@code RankingService}.
+     *
+     * @param rankingService the ranking service to use for building the leaderboard
+     */
     public RankingBuilder(RankingService rankingService) {
         this.rankingService = rankingService;
     }
 
+    /**
+     * Adds an entry to the leaderboard.
+     *
+     * @param entry the entry to add
+     */
     public void addEntry(Entry entry) {
         this.entries.add(entry);
     }
 
+    /**
+     * Builds the leaderboard as a {@code CEmbed} object.
+     *
+     * @return the built {@code CEmbed} representing the leaderboard
+     */
     public CEmbed build() {
         CEmbed embed = new CEmbed();
         embed.author(Message.LEADERBOARD_AUTHOR.build());
@@ -52,12 +72,12 @@ public class RankingBuilder {
     }
 
     /**
-     * Ranking scoreboard entry object used to trace all current users and their experience, level, placement and last one...
+     * Represents an entry in the leaderboard.
      *
-     * @param name of the user
-     * @param experience raw experience long
-     * @param placement current placement in guild scoreboard
-     * @param lastPlacement last placement in guild scoreboard
+     * @param name          the name of the entry
+     * @param experience    the experience points of the entry
+     * @param placement     the current placement of the entry
+     * @param lastPlacement the last placement of the entry
      */
     public record Entry(String name, long experience, int placement, int lastPlacement) {
 
@@ -107,12 +127,25 @@ public class RankingBuilder {
         return builder.build();
     }
 
+    /**
+     * Truncates the given string to the specified maximum length, adding "..." if it exceeds that length.
+     *
+     * @param message  the string to truncate
+     * @param maxLength the maximum length of the string
+     * @return the truncated string
+     */
     public static String truncateString(String message, int maxLength) {
         return message.length() > maxLength
                 ? message.substring(0, maxLength) + "..."
                 : message;
     }
 
+    /**
+     * Formats the given experience value, appending "K" if the value is 1000 or more.
+     *
+     * @param experience the experience value to format
+     * @return the formatted experience string
+     */
     public static String formatExperience(long experience) {
         if (Math.abs(experience) >= 1000L) {
             double formattedValue = (double) experience / 1000.0;
