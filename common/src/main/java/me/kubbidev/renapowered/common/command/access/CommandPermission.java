@@ -14,7 +14,8 @@ public enum CommandPermission {
     INFO("info", Type.NONE),
     IMPORT("import", Type.NONE),
     EXPORT("export", Type.NONE),
-    RELOAD_CONFIG("reloadconfig", Type.NONE);
+    RELOAD_CONFIG("reloadconfig", Type.NONE),
+    TRANSLATIONS("translations", Type.NONE);
 
     public static final String ROOT = "renapowered.";
 

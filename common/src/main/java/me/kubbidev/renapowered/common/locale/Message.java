@@ -24,9 +24,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static net.kyori.adventure.text.Component.*;
@@ -410,6 +408,21 @@ public interface Message {
             )
     );
 
+    Args0 TRANSLATIONS_SEARCHING = () -> prefixed(translatable()
+            // "&7Searching for available translations, please wait..."
+            .key("renapowered.command.translations.searching")
+            .color(GRAY)
+    );
+
+    Args1<Collection<String>> INSTALLED_TRANSLATIONS = locales -> prefixed(translatable()
+            // "&aInstalled Translations:"
+            .key("renapowered.command.translations.installed-translations")
+            .color(GREEN)
+            .append(text(':'))
+            .append(space())
+            .append(formatStringList(locales))
+    );
+
     Args2<RenaPlugin, StorageMetadata> INFO = (plugin, storageMeta) -> joinNewline(
             // "&2Running &bRenaPowered v{}&2 by &bkubbidev&2."
             // "&f-  &3Platform: &f{}"
@@ -687,7 +700,8 @@ public interface Message {
 
         Component activities;
         if (activitiesMap.isEmpty()) {
-            activities = Component.translatable("renapowered.command.profile.activity.empty");
+            activities = Component.translatable("renapowered.command.profile.activity.empty")
+                    .append(FULL_STOP);
         } else {
             Map<Component, String> activitiesFormatted = activitiesMap.entrySet().stream()
                     .filter(a -> a.getKey() != Activity.ActivityType.CUSTOM_STATUS)
@@ -782,6 +796,22 @@ public interface Message {
             .key("renapowered.command.ranking.enabled.off")
             .append(FULL_STOP)
             .build();
+
+    static Component formatStringList(Collection<String> strings) {
+        Iterator<String> it = strings.iterator();
+        if (!it.hasNext()) {
+            return translatable("renapowered.command.misc.none", AQUA); // "&bNone"
+        }
+
+        TextComponent.Builder builder = text().color(DARK_AQUA).content(it.next());
+
+        while (it.hasNext()) {
+            builder.append(text(", ", GRAY));
+            builder.append(text(it.next()));
+        }
+
+        return builder.build();
+    }
 
     static Component formatBoolean(boolean bool) {
         return bool ? text("true", GREEN) : text("false", RED);

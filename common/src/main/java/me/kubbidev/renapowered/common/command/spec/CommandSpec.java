@@ -24,7 +24,8 @@ public enum CommandSpec {
     EXPORT("/%s export <file>",
             arg("file", false)
     ),
-    RELOAD_CONFIG("/%s reloadconfig");
+    RELOAD_CONFIG("/%s reloadconfig"),
+    TRANSLATIONS("/%s translations");
 
     private final String usage;
     private final List<Argument> args;

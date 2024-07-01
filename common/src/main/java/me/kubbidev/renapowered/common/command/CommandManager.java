@@ -59,6 +59,7 @@ public class CommandManager {
                 .add(new ImportCommand())
                 .add(new ExportCommand())
                 .add(new ReloadConfigCommand())
+                .add(new TranslationsCommand())
                 .build()
                 .stream()
                 .collect(ImmutableCollectors.toMap(c -> c.getName().toLowerCase(Locale.ROOT), Function.identity()));
