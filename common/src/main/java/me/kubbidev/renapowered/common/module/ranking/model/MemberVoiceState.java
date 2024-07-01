@@ -1,4 +1,4 @@
-package me.kubbidev.renapowered.common.ranking.model;
+package me.kubbidev.renapowered.common.module.ranking.model;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import lombok.Getter;

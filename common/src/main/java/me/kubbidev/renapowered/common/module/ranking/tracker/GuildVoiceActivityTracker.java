@@ -1,7 +1,7 @@
-package me.kubbidev.renapowered.common.ranking.tracker;
+package me.kubbidev.renapowered.common.module.ranking.tracker;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import me.kubbidev.renapowered.common.ranking.model.MemberVoiceState;
+import me.kubbidev.renapowered.common.module.ranking.model.MemberVoiceState;
 import me.kubbidev.renapowered.common.util.CaffeineFactory;
 import org.jetbrains.annotations.Nullable;
 

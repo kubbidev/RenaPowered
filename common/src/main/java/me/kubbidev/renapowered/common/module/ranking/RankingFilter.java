@@ -1,4 +1,4 @@
-package me.kubbidev.renapowered.common.ranking;
+package me.kubbidev.renapowered.common.module.ranking;
 
 import me.kubbidev.renapowered.common.plugin.RenaPlugin;
 import me.kubbidev.renapowered.common.worker.event.intercept.FilterChain;

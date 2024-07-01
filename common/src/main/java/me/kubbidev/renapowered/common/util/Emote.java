@@ -1,4 +1,4 @@
-package me.kubbidev.renapowered.common.worker.util;
+package me.kubbidev.renapowered.common.util;
 
 import lombok.Getter;
 

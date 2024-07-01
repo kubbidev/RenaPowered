@@ -3,11 +3,12 @@ package me.kubbidev.renapowered.common.worker;
 import lombok.Getter;
 import me.kubbidev.renapowered.common.config.ConfigKeys;
 import me.kubbidev.renapowered.common.listeners.MemberListener;
-import me.kubbidev.renapowered.common.ranking.listener.ActivityListener;
+import me.kubbidev.renapowered.common.module.birthday.BirthdayService;
+import me.kubbidev.renapowered.common.module.ranking.listener.ActivityListener;
 import me.kubbidev.renapowered.common.plugin.RenaPlugin;
-import me.kubbidev.renapowered.common.ranking.RankingService;
+import me.kubbidev.renapowered.common.module.ranking.RankingService;
 import me.kubbidev.renapowered.common.util.ComponentSerializer;
-import me.kubbidev.renapowered.common.worker.util.CEmbed;
+import me.kubbidev.renapowered.common.util.AdventureEmbed;
 import me.kubbidev.renapowered.common.worker.command.InteractionManager;
 import me.kubbidev.renapowered.common.worker.event.EventHandler;
 import me.kubbidev.renapowered.common.worker.event.EventManager;
@@ -17,8 +18,6 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.ExceptionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
-import net.dv8tion.jda.api.events.session.SessionDisconnectEvent;
-import net.dv8tion.jda.api.events.session.SessionResumeEvent;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.requests.FluentRestAction;
@@ -139,14 +138,6 @@ public class DiscordService extends DiscordEventListener implements AutoCloseabl
     }
 
     @Override
-    public void onSessionDisconnect(@NotNull SessionDisconnectEvent event) {
-    }
-
-    @Override
-    public void onSessionResume(@NotNull SessionResumeEvent event) {
-    }
-
-    @Override
     public void onException(@NotNull ExceptionEvent event) {
         this.plugin.getLogger().severe("Throw new JDA exception: " + event.getCause());
     }
@@ -167,13 +158,13 @@ public class DiscordService extends DiscordEventListener implements AutoCloseabl
         return sendTempMessageSilent(messageChannel::sendMessage, ComponentSerializer.serialize(message, locale), delay, unit);
     }
 
-    public CompletableFuture<Message> sendMessage(MessageChannel messageChannel, CEmbed embed, @Nullable Locale locale) {
+    public CompletableFuture<Message> sendMessage(MessageChannel messageChannel, AdventureEmbed embed, @Nullable Locale locale) {
         return sendMessageSilent(builder -> messageChannel.sendMessage(new MessageCreateBuilder()
                 .setEmbeds(embed.build(locale))
                 .build()), embed);
     }
 
-    public CompletableFuture<Message> sendTempMessage(MessageChannel messageChannel, CEmbed embed, @Nullable Locale locale, long delay, TimeUnit unit) {
+    public CompletableFuture<Message> sendTempMessage(MessageChannel messageChannel, AdventureEmbed embed, @Nullable Locale locale, long delay, TimeUnit unit) {
         return sendTempMessageSilent(builder -> messageChannel.sendMessage(new MessageCreateBuilder()
                 .setEmbeds(embed.build(locale))
                 .build()), embed, delay, unit);

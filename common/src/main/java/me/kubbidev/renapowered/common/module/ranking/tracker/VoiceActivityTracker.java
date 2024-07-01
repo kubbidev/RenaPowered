@@ -1,7 +1,7 @@
-package me.kubbidev.renapowered.common.ranking.tracker;
+package me.kubbidev.renapowered.common.module.ranking.tracker;
 
-import me.kubbidev.renapowered.common.ranking.RankingService;
-import me.kubbidev.renapowered.common.ranking.model.MemberVoiceState;
+import me.kubbidev.renapowered.common.module.ranking.RankingService;
+import me.kubbidev.renapowered.common.module.ranking.model.MemberVoiceState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;

@@ -3,7 +3,7 @@ package me.kubbidev.renapowered.common.worker.command;
 import lombok.Getter;
 import me.kubbidev.renapowered.common.plugin.RenaPlugin;
 import me.kubbidev.renapowered.common.util.ComponentSerializer;
-import me.kubbidev.renapowered.common.worker.util.CEmbed;
+import me.kubbidev.renapowered.common.util.AdventureEmbed;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -57,13 +57,13 @@ public class CommandContext {
                 ComponentSerializer.serialize(message, getDiscordLocale().toLocale()), delay, unit);
     }
 
-    public CompletableFuture<Message> reply(InteractionHook interactionHook, CEmbed embed) {
+    public CompletableFuture<Message> reply(InteractionHook interactionHook, AdventureEmbed embed) {
         return this.plugin.getDiscordService().sendMessageSilent(builder -> interactionHook.sendMessage(new MessageCreateBuilder()
                 .setEmbeds(embed.build(getDiscordLocale().toLocale()))
                 .build()), embed);
     }
 
-    public CompletableFuture<Message> replyTemp(InteractionHook interactionHook, CEmbed embed, long delay, TimeUnit unit) {
+    public CompletableFuture<Message> replyTemp(InteractionHook interactionHook, AdventureEmbed embed, long delay, TimeUnit unit) {
         return this.plugin.getDiscordService().sendTempMessageSilent(builder -> interactionHook.sendMessage(new MessageCreateBuilder()
                 .setEmbeds(embed.build(getDiscordLocale().toLocale()))
                 .build()), embed, delay, unit);

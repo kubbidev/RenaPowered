@@ -1,6 +1,6 @@
 package me.kubbidev.renapowered.common.worker.commands;
 
-import me.kubbidev.renapowered.common.worker.util.CEmbed;
+import me.kubbidev.renapowered.common.util.AdventureEmbed;
 import me.kubbidev.renapowered.common.worker.command.CommandContext;
 import me.kubbidev.renapowered.common.worker.command.DiscordCommand;
 import me.kubbidev.renapowered.common.worker.command.InteractionCommand;
@@ -16,7 +16,7 @@ public class AboutCommand implements InteractionCommand {
 
     @Override
     public void onPerform(CommandContext context) {
-        CEmbed embed = new CEmbed();
+        AdventureEmbed embed = new AdventureEmbed();
         embed.author(Message.ABOUT_AUTHOR.build());
         embed.footer(Message.REQUESTED_BY.build(
                 context.getAuthor().getEffectiveName()),

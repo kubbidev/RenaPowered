@@ -1,11 +1,11 @@
-package me.kubbidev.renapowered.common.ranking.listener;
+package me.kubbidev.renapowered.common.module.ranking.listener;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import me.kubbidev.renapowered.common.model.GuildEntity;
 import me.kubbidev.renapowered.common.model.manager.StandardGuildManager;
 import me.kubbidev.renapowered.common.plugin.RenaPlugin;
-import me.kubbidev.renapowered.common.ranking.model.MemberVoiceState;
-import me.kubbidev.renapowered.common.ranking.tracker.GuildVoiceActivityTracker;
+import me.kubbidev.renapowered.common.module.ranking.model.MemberVoiceState;
+import me.kubbidev.renapowered.common.module.ranking.tracker.GuildVoiceActivityTracker;
 import me.kubbidev.renapowered.common.util.CaffeineFactory;
 import me.kubbidev.renapowered.common.worker.event.EventHandler;
 import me.kubbidev.renapowered.common.worker.listener.DiscordEventListener;

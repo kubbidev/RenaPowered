@@ -3,7 +3,7 @@ package me.kubbidev.renapowered.common.worker.commands;
 import me.kubbidev.renapowered.common.locale.Message;
 import me.kubbidev.renapowered.common.model.UserEntity;
 import me.kubbidev.renapowered.common.model.manager.StandardUserManager;
-import me.kubbidev.renapowered.common.worker.util.CEmbed;
+import me.kubbidev.renapowered.common.util.AdventureEmbed;
 import me.kubbidev.renapowered.common.worker.command.CommandContext;
 import me.kubbidev.renapowered.common.worker.command.DiscordCommand;
 import me.kubbidev.renapowered.common.worker.command.InteractionCommand;
@@ -36,14 +36,11 @@ public class ProfileCommand implements InteractionCommand {
         if (member == null) {
             member = context.getMember();
         }
-        UserEntity userEntity = StandardUserManager.fetch(
-                context.getPlugin(),
-                member.getUser()
-        );
+        UserEntity userEntity = StandardUserManager.fetch(context.getPlugin(), member.getUser());
         Map<Activity.ActivityType, List<Activity>> activities = member.getActivities().stream()
                 .collect(Collectors.groupingBy(Activity::getType));
 
-        CEmbed builder = new CEmbed();
+        AdventureEmbed builder = new AdventureEmbed();
         builder.color(0x1663ff);
         builder.thumbnail(member.getEffectiveAvatarUrl());
         builder.timestamp(Instant.now());

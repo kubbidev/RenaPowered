@@ -3,7 +3,7 @@ package me.kubbidev.renapowered.common.worker.event;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import me.kubbidev.renapowered.common.plugin.RenaPlugin;
-import me.kubbidev.renapowered.common.ranking.RankingFilter;
+import me.kubbidev.renapowered.common.module.ranking.RankingFilter;
 import me.kubbidev.renapowered.common.worker.event.intercept.EventFilterFactory;
 import me.kubbidev.renapowered.common.worker.event.intercept.Filter;
 import me.kubbidev.renapowered.common.worker.event.intercept.FilterChain;

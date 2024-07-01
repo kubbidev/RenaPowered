@@ -1,4 +1,4 @@
-package me.kubbidev.renapowered.common.ranking.util;
+package me.kubbidev.renapowered.common.module.ranking.util;
 
 public final class RankingUtil {
     private RankingUtil() {

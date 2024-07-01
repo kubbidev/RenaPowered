@@ -1,9 +1,9 @@
-package me.kubbidev.renapowered.common.ranking.util;
+package me.kubbidev.renapowered.common.module.ranking.util;
 
 import me.kubbidev.renapowered.common.locale.Message;
-import me.kubbidev.renapowered.common.ranking.RankingService;
-import me.kubbidev.renapowered.common.worker.util.Emote;
-import me.kubbidev.renapowered.common.worker.util.CEmbed;
+import me.kubbidev.renapowered.common.module.ranking.RankingService;
+import me.kubbidev.renapowered.common.util.Emote;
+import me.kubbidev.renapowered.common.util.AdventureEmbed;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 
@@ -51,8 +51,8 @@ public class RankingBuilder {
      *
      * @return the built {@code CEmbed} representing the leaderboard
      */
-    public CEmbed build() {
-        CEmbed embed = new CEmbed();
+    public AdventureEmbed build() {
+        AdventureEmbed embed = new AdventureEmbed();
         embed.author(Message.LEADERBOARD_AUTHOR.build());
         embed.thumbnail("https://static.wikia.nocookie.net/gensin-impact/images/1/17/Achievement_Wonders_of_the_World.png");
         embed.color(EMBED_COLOR);
@@ -64,10 +64,10 @@ public class RankingBuilder {
         );
 
         embed.title(Message.LEADERBOARD_TITLE.build(nextDate, pastDate));
-        embed.field(CEmbed.BLANK_FIELD, createNameField(), true);
-        embed.field(CEmbed.BLANK_FIELD, createExperienceField(), true);
-        embed.field(CEmbed.BLANK_FIELD, createLevelField(), true);
-        embed.field(CEmbed.BLANK_FIELD, createNextUpdateField(), false);
+        embed.field(AdventureEmbed.BLANK_FIELD, createNameField(), true);
+        embed.field(AdventureEmbed.BLANK_FIELD, createExperienceField(), true);
+        embed.field(AdventureEmbed.BLANK_FIELD, createLevelField(), true);
+        embed.field(AdventureEmbed.BLANK_FIELD, createNextUpdateField(), false);
         return embed;
     }
 

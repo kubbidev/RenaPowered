@@ -1,12 +1,12 @@
-package me.kubbidev.renapowered.common.ranking;
+package me.kubbidev.renapowered.common.module.ranking;
 
 import me.kubbidev.renapowered.common.model.GuildEntity;
 import me.kubbidev.renapowered.common.model.MemberEntity;
 import me.kubbidev.renapowered.common.model.manager.StandardGuildManager;
 import me.kubbidev.renapowered.common.model.manager.StandardMemberManager;
 import me.kubbidev.renapowered.common.plugin.RenaPlugin;
-import me.kubbidev.renapowered.common.ranking.model.MemberVoiceState;
-import me.kubbidev.renapowered.common.ranking.util.RankingBuilder;
+import me.kubbidev.renapowered.common.module.ranking.model.MemberVoiceState;
+import me.kubbidev.renapowered.common.module.ranking.util.RankingBuilder;
 import me.kubbidev.renapowered.common.util.ExpiringSet;
 import me.kubbidev.renapowered.common.util.ImmutableCollectors;
 import me.kubbidev.renapowered.common.util.ScheduledTask;

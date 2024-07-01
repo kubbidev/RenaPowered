@@ -5,7 +5,7 @@ import me.kubbidev.renapowered.common.plugin.RenaPlugin;
 import me.kubbidev.renapowered.common.plugin.bootstrap.RenaBootstrap;
 import me.kubbidev.renapowered.common.sender.Sender;
 import me.kubbidev.renapowered.common.storage.StorageMetadata;
-import me.kubbidev.renapowered.common.worker.util.Emote;
+import me.kubbidev.renapowered.common.util.Emote;
 import me.kubbidev.renapowered.common.util.DurationFormatter;
 import me.kubbidev.renapowered.common.util.ImmutableCollectors;
 import net.dv8tion.jda.api.OnlineStatus;

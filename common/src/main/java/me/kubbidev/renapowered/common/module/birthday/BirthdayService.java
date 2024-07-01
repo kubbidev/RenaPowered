@@ -1,4 +1,4 @@
-package me.kubbidev.renapowered.common.worker;
+package me.kubbidev.renapowered.common.module.birthday;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

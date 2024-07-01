@@ -1,7 +1,6 @@
-package me.kubbidev.renapowered.common.worker.util;
+package me.kubbidev.renapowered.common.util;
 
 import lombok.AllArgsConstructor;
-import me.kubbidev.renapowered.common.util.ComponentSerializer;
 import net.dv8tion.jda.api.entities.EmbedType;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.internal.entities.EntityBuilder;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
-public class CEmbed {
+public class AdventureEmbed {
     protected final List<CField> fields = new ArrayList<>(25);
     protected int color = 0x1FFFFFFF;
 
@@ -36,75 +35,73 @@ public class CEmbed {
     protected CAuthor author = new CAuthor();
     protected CFooter footer = new CFooter();
 
-    private final Object[] mutex = new Object[0];
-
-    public CEmbed title(@NotNull Component title) {
+    public AdventureEmbed title(@NotNull Component title) {
         title(title, null);
         return this;
     }
 
-    public CEmbed title(@NotNull Component title, String url) {
+    public AdventureEmbed title(@NotNull Component title, String url) {
         this.title = requireNonNull(title, "title");
         this.url = url;
         return this;
     }
 
-    public CEmbed url(String url) {
+    public AdventureEmbed url(String url) {
         this.url = requireNonNull(url, "url");
         return this;
     }
 
-    public CEmbed description(@NotNull Component description) {
+    public AdventureEmbed description(@NotNull Component description) {
         this.description = requireNonNull(description, "description");
         return this;
     }
 
-    public CEmbed timestamp(@NotNull TemporalAccessor accessor) {
+    public AdventureEmbed timestamp(@NotNull TemporalAccessor accessor) {
         this.timestamp = toOffsetDateTime(requireNonNull(accessor, "timestamp"));
         return this;
     }
 
-    public CEmbed color(int color) {
+    public AdventureEmbed color(int color) {
         this.color = color;
         return this;
     }
 
-    public CEmbed thumbnail(String url) {
+    public AdventureEmbed thumbnail(String url) {
         this.thumbnail = requireNonNull(url, "thumbnail");
         return this;
     }
 
-    public CEmbed image(String url) {
+    public AdventureEmbed image(String url) {
         this.image = requireNonNull(url, "image");
         return this;
     }
 
-    public CEmbed author(@NotNull Component name) {
+    public AdventureEmbed author(@NotNull Component name) {
         author(name, null);
         return this;
     }
 
-    public CEmbed author(@NotNull Component name, String url) {
+    public AdventureEmbed author(@NotNull Component name, String url) {
         author(name, url, null);
         return this;
     }
 
-    public CEmbed author(@NotNull Component name, String url, String iconUrl) {
+    public AdventureEmbed author(@NotNull Component name, String url, String iconUrl) {
         this.author = new CAuthor(requireNonNull(name, "author"), url, iconUrl);
         return this;
     }
 
-    public CEmbed footer(@NotNull Component name) {
+    public AdventureEmbed footer(@NotNull Component name) {
         footer(name, null);
         return this;
     }
 
-    public CEmbed footer(@NotNull Component name, String iconUrl) {
+    public AdventureEmbed footer(@NotNull Component name, String iconUrl) {
         this.footer = new CFooter(requireNonNull(name, "footer"), iconUrl);
         return this;
     }
 
-    public CEmbed field(@NotNull Component name, @NotNull Component value, boolean inline) {
+    public AdventureEmbed field(@NotNull Component name, @NotNull Component value, boolean inline) {
         this.fields.add(new CField(
                 requireNonNull(name, "name"),
                 requireNonNull(value, "value"), inline));
@@ -113,12 +110,12 @@ public class CEmbed {
 
     public static final Component BLANK_FIELD = Component.text('\u200E');
 
-    public CEmbed blankField(boolean inline) {
+    public AdventureEmbed blankField(boolean inline) {
         field(BLANK_FIELD, BLANK_FIELD, inline);
         return this;
     }
 
-    public CEmbed clearFields() {
+    public AdventureEmbed clearFields() {
         this.fields.clear();
         return this;
     }
@@ -152,26 +149,24 @@ public class CEmbed {
     }
 
     public MessageEmbed build(@Nullable Locale locale) {
-        synchronized (this.mutex) {
-            Function<Component, String> toString = c -> c == null ? null : ComponentSerializer.serialize(c, locale);
+        Function<Component, String> toString = c -> c == null ? null : ComponentSerializer.serialize(c, locale);
 
-            String t = toString.apply(this.title);
-            String d = toString.apply(this.description);
-            String a = toString.apply(this.author.name);
-            String f = toString.apply(this.footer.text);
+        String t = toString.apply(this.title);
+        String d = toString.apply(this.description);
+        String a = toString.apply(this.author.name);
+        String f = toString.apply(this.footer.text);
 
-            return EntityBuilder.createMessageEmbed(this.url, t, d, EmbedType.RICH,
-                    this.timestamp,
-                    this.color,
-                    new MessageEmbed.Thumbnail(this.thumbnail, null, 0, 0), null,
-                    new MessageEmbed.AuthorInfo(a, this.author.url, this.author.iconUrl, null), null,
-                    new MessageEmbed.Footer(f, this.footer.iconUrl, null),
-                    new MessageEmbed.ImageInfo(this.image, null, 0, 0),
-                    new LinkedList<>(this.fields.stream().map(e -> new MessageEmbed.Field(
-                            toString.apply(e.name),
-                            toString.apply(e.value), e.inline)).collect(Collectors.toList())
-                    ));
-        }
+        return EntityBuilder.createMessageEmbed(this.url, t, d, EmbedType.RICH,
+                this.timestamp,
+                this.color,
+                new MessageEmbed.Thumbnail(this.thumbnail, null, 0, 0), null,
+                new MessageEmbed.AuthorInfo(a, this.author.url, this.author.iconUrl, null), null,
+                new MessageEmbed.Footer(f, this.footer.iconUrl, null),
+                new MessageEmbed.ImageInfo(this.image, null, 0, 0),
+                new LinkedList<>(this.fields.stream().map(e -> new MessageEmbed.Field(
+                        toString.apply(e.name),
+                        toString.apply(e.value), e.inline)).collect(Collectors.toList())
+                ));
     }
 
     private static OffsetDateTime toOffsetDateTime(TemporalAccessor accessor) {
