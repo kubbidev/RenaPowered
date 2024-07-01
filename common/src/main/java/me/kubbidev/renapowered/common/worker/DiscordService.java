@@ -19,6 +19,7 @@ import net.dv8tion.jda.api.events.ExceptionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.session.SessionDisconnectEvent;
 import net.dv8tion.jda.api.events.session.SessionResumeEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.requests.FluentRestAction;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -34,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -49,6 +51,7 @@ public class DiscordService extends DiscordEventListener implements AutoCloseabl
      * The command manager used to register and execute discord commands
      */
     private final InteractionManager interactionManager;
+    private final CountDownLatch shutdownLatch = new CountDownLatch(1);
 
     private RankingService rankingService;
     private BirthdayService birthdayService;
@@ -128,6 +131,11 @@ public class DiscordService extends DiscordEventListener implements AutoCloseabl
 
         this.birthdayService = new BirthdayService(this.plugin);
         this.birthdayService.schedule();
+    }
+
+    @Override
+    public void onShutdown(@NotNull ShutdownEvent event) {
+        this.shutdownLatch.countDown();
     }
 
     @Override

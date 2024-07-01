@@ -135,6 +135,14 @@ public abstract class AbstractRenaPlugin implements RenaPlugin {
         // shutdown async executor pool
         getBootstrap().getScheduler().shutdownExecutor();
 
+        /* wait for the discord connection to shutdown. because the event is fired async, it can be called after
+           the plugin has shutdown and so after the classpath appender close, leading to NoClassDefFoundError.  */
+        try {
+            getDiscordService().getShutdownLatch().await(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         // close isolated loaders for non-relocated dependencies
         getDependencyManager().close();
 
