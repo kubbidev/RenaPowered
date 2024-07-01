@@ -12,9 +12,6 @@ import me.kubbidev.renapowered.common.util.ImmutableCollectors;
 import me.kubbidev.renapowered.common.worker.commands.*;
 import me.kubbidev.renapowered.common.worker.commands.ranking.RChannelCommand;
 import me.kubbidev.renapowered.common.worker.commands.ranking.REnabledCommand;
-import me.kubbidev.renapowered.common.worker.commands.suggestion.SApproveCommand;
-import me.kubbidev.renapowered.common.worker.commands.suggestion.SChannelCommand;
-import me.kubbidev.renapowered.common.worker.commands.suggestion.SDisapproveCommand;
 import me.kubbidev.renapowered.common.worker.event.EventHandler;
 import me.kubbidev.renapowered.common.worker.listener.DiscordEventListener;
 import me.kubbidev.renapowered.common.util.StackTracePrinter;
@@ -67,12 +64,8 @@ public class InteractionManager extends DiscordEventListener {
                 .add(new AboutCommand())
                 .add(new PingCommand())
                 .add(new ProfileCommand())
-                .add(new SuggestionCommand())
                 .add(new RChannelCommand())
                 .add(new REnabledCommand())
-                .add(new SApproveCommand())
-                .add(new SChannelCommand())
-                .add(new SDisapproveCommand())
                 .build()
                 .stream()
                 .collect(ImmutableCollectors.toMap(command -> getDiscordCommand(command).name().toLowerCase(Locale.ROOT), Function.identity()));

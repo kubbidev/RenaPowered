@@ -10,7 +10,6 @@ import me.kubbidev.renapowered.common.util.DurationFormatter;
 import me.kubbidev.renapowered.common.util.ImmutableCollectors;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.kyori.adventure.text.Component;
@@ -764,108 +763,6 @@ public interface Message {
                 .append(activities)
                 .build();
     };
-
-    Args0 SUGGESTION_IN_COOLDOWN = () -> translatable()
-            // Please wait before sending another suggestion...
-            .key("renapowered.command.suggestion.exception.in-cooldown")
-            .build();
-
-    Args0 SUGGESTION_UNKNOWN_CHANNEL = () -> translatable()
-            // It seems that this server does not support suggestions.
-            .key("renapowered.command.suggestion.exception.unknown.channel")
-            .append(FULL_STOP)
-            .build();
-
-    Args2<String, User> SUGGESTION_DESCRIPTION = (suggestion, user) -> text()
-            // > **Suggestion:**
-            // > `{}`
-            //
-            // **__Information__**
-            // > **Suggester:** {}
-            // > **Suggested on:** {}
-            //
-            // **__Note__**
-            // > Please feel free to engage in a discussion about this suggestion in the thread below!
-            .append(text()
-                    .append(text("> **"))
-                    .append(translatable("renapowered.command.suggestion.embed.suggestion"))
-                    .append(text(":**"))
-                    .append(newline())
-                    .append(text("> `"))
-                    .append(text(suggestion))
-                    .append(text('`')))
-            .append(newline())
-            .append(newline())
-            .append(text("**__")).append(translatable("renapowered.command.suggestion.embed.information"))
-            .append(text("__**"))
-            .append(newline())
-            .append(text()
-                    .append(text("> **"))
-                    .append(translatable("renapowered.command.suggestion.embed.suggester"))
-                    .append(text(":** "))
-                    .append(text(user.getAsMention())))
-            .append(newline())
-            .append(text()
-                    .append(text("> **"))
-                    .append(translatable("renapowered.command.suggestion.embed.suggested"))
-                    .append(text(":** <t:" + Instant.now().getEpochSecond() + ":F>")))
-            .append(newline())
-            .append(newline())
-            .append(text("**__")).append(translatable("renapowered.command.suggestion.embed.note"))
-            .append(text("__**"))
-            .append(newline())
-            .append(text()
-                    .append(text("> "))
-                    .append(translatable("renapowered.command.suggestion.embed.note-content")))
-            .build();
-
-    Args0 SUGGESTION_UNKNOWN = () -> translatable()
-            // That suggestion doesn't exist!
-            .key("renapowered.command.suggestion.exception.unknown")
-            .build();
-
-    Args0 SUGGESTION_APPROVE_TITLE = () -> translatable()
-            // This suggestion have been approved! {}
-            .key("renapowered.command.suggestion.approve.approved")
-            .append(space())
-            .append(text(Emote.WHITE_CHECK_MARK.toString()))
-            .build();
-
-    Args0 SUGGESTION_APPROVE_FOOTER = () -> translatable()
-            // Suggestion approved
-            .key("renapowered.command.suggestion.approve.approved-on")
-            .build();
-
-    Args0 SUGGESTION_APPROVE_RESPONSE = () -> translatable()
-            // The suggestion is now mark as approved.
-            .key("renapowered.command.suggestion.approve.response")
-            .append(FULL_STOP)
-            .build();
-
-    Args0 SUGGESTION_DISAPPROVE_TITLE = () -> translatable()
-            // This suggestion have been disapproved! {}
-            .key("renapowered.command.suggestion.disapprove.disapproved")
-            .append(space())
-            .append(text(Emote.RED_CROSS.toString()))
-            .build();
-
-    Args0 SUGGESTION_DISAPPROVE_FOOTER = () -> translatable()
-            // Suggestion disapproved
-            .key("renapowered.command.suggestion.disapprove.disapproved-on")
-            .build();
-
-    Args0 SUGGESTION_DISAPPROVE_RESPONSE = () -> translatable()
-            // The suggestion is now mark as disapproved.
-            .key("renapowered.command.suggestion.disapprove.response")
-            .append(FULL_STOP)
-            .build();
-
-    Args1<Channel> SUGGESTION_CHANNEL_UPDATED = channel -> translatable()
-            // From now on, {} will be the transmission channel for all suggestions.
-            .key("renapowered.command.suggestion.channel.updated")
-            .args(text(channel.getAsMention()))
-            .append(FULL_STOP)
-            .build();
 
     Args1<Channel> RANKING_CHANNEL_UPDATED = channel -> translatable()
             // From now on, {} will be the transmission channel for the classification.
