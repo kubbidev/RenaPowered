@@ -60,9 +60,6 @@ dependencies {
     api("org.spongepowered:configurate-hocon:3.7.2") {
         isTransitive = false
     }
-    compileOnly("com.fasterxml.jackson.core:jackson-core:2.16.0")
-    compileOnly("com.fasterxml.jackson.core:jackson-databind:2.16.0")
-    compileOnly("com.fasterxml.jackson.core:jackson-annotations:2.16.0")
 
     compileOnly("org.mongodb:mongodb-driver-legacy:4.5.0")
     compileOnly("org.yaml:snakeyaml:1.28")

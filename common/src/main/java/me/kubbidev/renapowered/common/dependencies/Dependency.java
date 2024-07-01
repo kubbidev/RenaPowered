@@ -151,6 +151,24 @@ public enum Dependency {
             "TAqn4iPHXIhAxB/Bg9TNMRgUCh7lA+PgjOZu0nlMlI8=",
             Relocation.of("hocon", "com{}typesafe{}config")
     ),
+    JACKSON_CORE(
+            "com.fasterxml.jackson.core",
+            "jackson-core",
+            "2.17.0",
+            "Vb4TD2poA4CIomGFbE44POeZV6D8GinsshOp79bvQ4k="
+    ),
+    JACKSON_DATABIND(
+            "com.fasterxml.jackson.core",
+            "jackson-databind",
+            "2.17.0",
+            "0O1bVMsbC7sIKOJM51KkOgBtwYizTjpK4yOKzHtjdBg="
+    ),
+    JACKSON_ANNOTATIONS(
+            "com.fasterxml.jackson.core",
+            "jackson-annotations",
+            "2.17.0",
+            "hWJWmgAdRuhOojgCJX4zyPaLJOtHweDv0TOgNyxRKVk="
+    ),
     COLLECTIONS4(
             "org.apache.commons",
             "commons-collections4",
@@ -159,7 +177,7 @@ public enum Dependency {
             Relocation.of("collections4", "org{}apache{}commons{}collections4")
     ),
     NEOVISIONARIES(
-            "com{}neovisionaries",
+            "com.neovisionaries",
             "nv-websocket-client",
             "2.14",
             "7tD7b1712xfQhwOfHoKc/oJzY7KGMmUlipbw7TIzE7c=",
@@ -167,9 +185,9 @@ public enum Dependency {
     ),
     TROVE4J(
             "net.sf.trove4j",
-            "trove4j",
-            "3.0.3",
-            "PIYWID1hoSp+NIfos088GYwrW6npDaDH6jLZnNSVgBI=",
+            "core",
+            "3.1.0",
+            "4f7U1xiobSfF67QngQVQ+lwDJg41DkGoXvLC226sCFY=",
             Relocation.of("trove4j", "gnu{}trove")
     ),
     JDA(

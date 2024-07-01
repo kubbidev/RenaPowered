@@ -25,7 +25,6 @@ tasks.shadowJar {
     relocate("ninja.leaping.configurate", "me.kubbidev.renapowered.lib.configurate")
     relocate("org.yaml.snakeyaml", "me.kubbidev.renapowered.lib.yaml")
     relocate("net.dv8tion.jda", "me.kubbidev.renapowered.lib.jda")
-    relocate("com.neovisionaries.ws.client", "me.kubbidev.renapowered.lib.neovisionaries")
 }
 
 artifacts {

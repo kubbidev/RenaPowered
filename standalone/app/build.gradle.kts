@@ -43,10 +43,6 @@ dependencies {
     api("net.kyori:ansi:1.0.3") {
         exclude(module = "annotations")
     }
-
-    implementation("com.fasterxml.jackson.core:jackson-core:2.16.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.16.0")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:2.16.0")
 }
 
 blossom {
