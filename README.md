@@ -17,7 +17,7 @@ It is:
 RenaPowered uses Gradle to handle dependencies & building.
 
 #### Requirements
-* Java 21 JDK or newer
+* Java 17 JDK or newer
 * Git
 
 #### Compiling from source
