@@ -20,9 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class MongoStorage implements StorageImplementation {
     private final RenaPlugin plugin;
@@ -34,7 +32,7 @@ public class MongoStorage implements StorageImplementation {
     private final String connectionUri;
 
     /**
-     * Map storing all sql entities for iteration facility
+     * Map storing all {@link MongoEntity} for iteration facility
      */
     private final Map<Class<?>, MongoEntity> entitiesMap = LoadingMap.of(this::buildStoredEntity);
 
@@ -117,18 +115,18 @@ public class MongoStorage implements StorageImplementation {
     }
 
     private MongoEntity buildStoredEntity(Class<?> entityType) {
-        MongoEntity mongoEntity = null;
+        MongoEntity entity = null;
         try {
-            mongoEntity = new MongoEntity(entityType);
+            entity = new MongoEntity(entityType);
         } catch (Exception e) {
             this.plugin.getLogger().severe("Could not instantiate stored entity: "
                     + entityType.getSimpleName(), e);
         }
-        return mongoEntity;
+        return entity;
     }
 
     public MongoEntity getEntity(Class<?> entityType) {
-        return Objects.requireNonNull(this.entitiesMap.get(entityType), "SQL Entity could not be found for class: "
+        return Objects.requireNonNull(this.entitiesMap.get(entityType), "MongoEntity could not be found for class: "
                 + entityType.getSimpleName() + ", make sure that your class is register as");
     }
 
@@ -148,8 +146,8 @@ public class MongoStorage implements StorageImplementation {
 
     @Override
     public <I, T extends BaseEntity> T loadEntity(Class<T> type, I id, Manager<I, T> manager) throws Exception {
-        MongoEntity mongoEntity = getEntity(type);
-        return buildInstance(mongoEntity, manager, id, loadEntity0(id, mongoEntity));
+        MongoEntity entity = getEntity(type);
+        return buildInstance(entity, manager, id, loadEntity0(id, entity));
     }
 
     private <I> MongoData loadEntity0(I id, MongoEntity entity) {
@@ -165,10 +163,10 @@ public class MongoStorage implements StorageImplementation {
 
     @Override
     public <I, T extends BaseEntity> void loadAllEntities(Class<T> type, Manager<I, T> manager) throws Exception {
-        MongoEntity mongoEntity = getEntity(type);
-        Map<I, MongoData> dataMap = loadAllEntities0(mongoEntity);
+        MongoEntity entity = getEntity(type);
+        Map<I, MongoData> dataMap = loadAllEntities0(entity);
         for (Map.Entry<I, MongoData> entry : dataMap.entrySet()) {
-            buildInstance(mongoEntity, manager,
+            buildInstance(entity, manager,
                     entry.getKey(),
                     entry.getValue()
             );
@@ -200,6 +198,27 @@ public class MongoStorage implements StorageImplementation {
 
         MongoCollection<Document> c = this.database.getCollection(this.prefix + entity.getCollectionName());
         c.replaceOne(Filters.eq("_id", o.getId()), entityToDocument(entity, o), new ReplaceOptions().upsert(true));
+    }
+
+    @Override
+    public <I, T extends BaseEntity> Set<I> getUniqueEntities(Class<T> type) {
+        MongoEntity entity = getEntity(type);
+        return getUniqueEntities0(entity);
+    }
+
+    private <I> Set<I> getUniqueEntities0(MongoEntity entity) {
+        Set<I> ids = new HashSet<>();
+        MongoCollection<Document> c = this.database.getCollection(this.prefix + entity.getCollectionName());
+        try (MongoCursor<Document> cursor = c.find().iterator()) {
+            while (cursor.hasNext()) {
+                try {
+                    ids.add(getDocumentId(cursor.next()));
+                } catch (IllegalArgumentException e) {
+                    // ignore
+                }
+            }
+        }
+        return ids;
     }
 
     private static <I, T extends BaseEntity> T buildInstance(MongoEntity entity, Manager<I, T> manager, I id, @Nullable MongoData data)

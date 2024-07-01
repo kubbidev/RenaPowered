@@ -33,11 +33,6 @@ public class GuildEntity implements BaseEntity {
     @Entry(name = "ranking_channel")
     private long rankingChannel;
 
-    @Setter
-    @Getter
-    @Entry(name = "suggest_channel")
-    private long suggestChannel;
-
     public GuildEntity(long id) {
         this.id = id;
     }

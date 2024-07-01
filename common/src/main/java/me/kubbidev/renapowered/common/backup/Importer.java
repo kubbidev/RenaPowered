@@ -37,36 +37,6 @@ public class Importer implements Runnable {
         this.data = data;
     }
 
-    private void processGuild(long guildId, GuildData u) {
-        GuildEntity guildEntity = this.plugin.getStorage().loadEntity(GuildEntity.class, guildId, this.plugin.getGuildManager()).join();
-
-        guildEntity.setName(u.name);
-        guildEntity.setIconUrl(u.iconUrl);
-        guildEntity.setRanking(u.ranking);
-        guildEntity.setRankingChannel(u.rankingChannel);
-        guildEntity.setSuggestChannel(u.suggestChannel);
-        this.plugin.getStorage().saveEntity(guildEntity).join();
-    }
-
-    private void processUser(long userId, UserData u) {
-        UserEntity userEntity = this.plugin.getStorage().loadEntity(UserEntity.class, userId, this.plugin.getUserManager()).join();
-
-        userEntity.setUsername(u.username);
-        userEntity.setAvatarUrl(u.avatarUrl);
-        userEntity.setLastSeen(u.lastSeen);
-        this.plugin.getStorage().saveEntity(userEntity).join();
-    }
-
-    private void processMember(UUID uuid, MemberData u) {
-        MemberEntity memberEntity = this.plugin.getStorage().loadEntity(MemberEntity.class, uuid, this.plugin.getMemberManager()).join();
-
-        memberEntity.setEffectiveName(u.effectiveName);
-        memberEntity.setExperience(u.experience);
-        memberEntity.setVoiceActivity(u.voiceActivity);
-        memberEntity.setPreviousPlacement(u.previousPlacement);
-        this.plugin.getStorage().saveEntity(memberEntity).join();
-    }
-
     private Set<Map.Entry<String, JsonElement>> getDataSection(String id) {
         if (this.data.has(id)) {
             return this.data.get(id).getAsJsonObject().entrySet();
@@ -75,50 +45,52 @@ public class Importer implements Runnable {
         }
     }
 
-    private void parseExportData(Map<Long, UserData> users, Map<Long, GuildData> guilds, Map<UUID, MemberData> members) {
+    private void parseExportData(Map<Long, JsonObject> users, Map<Long, JsonObject> guilds, Map<UUID, JsonObject> members) {
         for (Map.Entry<String, JsonElement> guild : getDataSection("guilds")) {
-            JsonObject jsonData = guild.getValue().getAsJsonObject();
-            String iconUrl = null;
-            String name = jsonData.get("name").getAsString();
-
-            boolean ranking = jsonData.get("ranking").getAsBoolean();
-
-            long rankingChannel = jsonData.get("rankingChannel").getAsLong();
-            long suggestChannel = jsonData.get("suggestChannel").getAsLong();
-            long guildId = Long.parseLong(guild.getKey());
-
-            if (jsonData.has("iconUrl")) {
-                iconUrl = jsonData.get("iconUrl").getAsString();
-            }
-            guilds.put(guildId, new GuildData(name, iconUrl, ranking, rankingChannel, suggestChannel));
+            guilds.put(Long.parseLong(guild.getKey()), guild.getValue().getAsJsonObject());
         }
         for (Map.Entry<String, JsonElement> user : getDataSection("users")) {
-            JsonObject jsonData = user.getValue().getAsJsonObject();
-            String avatarUrl = null;
-            String username = jsonData.get("username").getAsString();
-
-            long lastSeen = jsonData.get("lastSeen").getAsLong();
-            long userId = Long.parseLong(user.getKey());
-
-            if (jsonData.has("avatarUrl")) {
-                avatarUrl = jsonData.get("avatarUrl").getAsString();
-            }
-            users.put(userId, new UserData(username, avatarUrl, lastSeen));
+            users.put(Long.parseLong(user.getKey()), user.getValue().getAsJsonObject());
         }
-        for (Map.Entry<String, JsonElement> ranking : getDataSection("members")) {
-            JsonObject jsonData = ranking.getValue().getAsJsonObject();
-            String effectiveName = null;
-
-            long experience = jsonData.get("experience").getAsLong();
-            long voiceActivity = jsonData.get("voiceActivity").getAsLong();
-            int previousPlacement = jsonData.get("previousPlacement").getAsInt();
-
-            UUID uuid = Uuids.fromString(ranking.getKey());
-            if (jsonData.has("effectiveName")) {
-                effectiveName = jsonData.get("effectiveName").getAsString();
-            }
-            members.put(uuid, new MemberData(effectiveName, experience, voiceActivity, previousPlacement));
+        for (Map.Entry<String, JsonElement> member : getDataSection("members")) {
+            members.put(Uuids.fromString(member.getKey()), member.getValue().getAsJsonObject());
         }
+    }
+
+    private void processGuild(Long id, JsonObject o) {
+        GuildEntity guild = this.plugin.getStorage().loadEntity(GuildEntity.class, id, this.plugin.getGuildManager()).join();
+        guild.setName(o.get("name").getAsString());
+
+        JsonElement iconUrl = o.get("iconUrl");
+        if (iconUrl != null && !iconUrl.isJsonNull()) {
+            guild.setIconUrl(iconUrl.getAsString());
+        }
+        guild.setRanking(o.get("ranking").getAsBoolean());
+        guild.setRankingChannel(o.get("rankingChannel").getAsLong());
+
+        this.plugin.getStorage().saveEntity(guild).join();
+    }
+
+    private void processUser(Long id, JsonObject o) {
+        UserEntity user = this.plugin.getStorage().loadEntity(UserEntity.class, id, this.plugin.getUserManager()).join();
+        user.setUsername(o.get("username").getAsString());
+        user.setLastSeen(o.get("lastSeen").getAsLong());
+
+        JsonElement avatarUrl = o.get("avatarUrl");
+        if (avatarUrl != null && !avatarUrl.isJsonNull()) {
+            user.setAvatarUrl(avatarUrl.getAsString());
+        }
+        this.plugin.getStorage().saveEntity(user).join();
+    }
+
+    private void processMember(UUID uuid, JsonObject o) {
+        MemberEntity member = this.plugin.getStorage().loadEntity(MemberEntity.class, uuid, this.plugin.getMemberManager()).join();
+        member.setEffectiveName(o.get("effectiveName").getAsString());
+        member.setExperience(o.get("experience").getAsLong());
+        member.setVoiceActivity(o.get("voiceActivity").getAsLong());
+        member.setPreviousPlacement(o.get("previousPlacement").getAsInt());
+
+        this.plugin.getStorage().saveEntity(member).join();
     }
 
     @Override
@@ -131,9 +103,9 @@ public class Importer implements Runnable {
 
         this.notify.forEach(s -> Message.IMPORT_INFO.send(s, "Reading data..."));
 
-        Map<Long, GuildData> guilds = new HashMap<>();
-        Map<Long, UserData> users = new HashMap<>();
-        Map<UUID, MemberData> members = new HashMap<>();
+        Map<Long, JsonObject> guilds = new HashMap<>();
+        Map<Long, JsonObject> users = new HashMap<>();
+        Map<UUID, JsonObject> members = new HashMap<>();
 
         parseExportData(users, guilds, members);
 
@@ -144,7 +116,7 @@ public class Importer implements Runnable {
 
         this.notify.forEach(s -> Message.IMPORT_INFO.send(s, "Setting up data processor..."));
 
-        // create a threadpool for the processing
+        // create a thread pool for the processing
         ExecutorService executor = Executors.newFixedThreadPool(16, new ThreadFactoryBuilder().setNameFormat("renapowered-importer-%d").build());
 
         // A set of futures, which are really just the processes we need to wait for.
@@ -153,23 +125,23 @@ public class Importer implements Runnable {
         int total = 0;
         AtomicInteger processedCount = new AtomicInteger(0);
 
-        for (Map.Entry<Long, GuildData> guild : guilds.entrySet()) {
-            futures.add(CompletableFuture.completedFuture(guild).thenAcceptAsync(ent -> {
-                processGuild(ent.getKey(), ent.getValue());
+        for (Map.Entry<Long, JsonObject> guild : guilds.entrySet()) {
+            futures.add(CompletableFuture.completedFuture(guild).thenAcceptAsync(e -> {
+                processGuild(e.getKey(), e.getValue());
                 processedCount.incrementAndGet();
             }, executor));
             total++;
         }
-        for (Map.Entry<Long, UserData> user : users.entrySet()) {
-            futures.add(CompletableFuture.completedFuture(user).thenAcceptAsync(ent -> {
-                processUser(ent.getKey(), ent.getValue());
+        for (Map.Entry<Long, JsonObject> user : users.entrySet()) {
+            futures.add(CompletableFuture.completedFuture(user).thenAcceptAsync(e -> {
+                processUser(e.getKey(), e.getValue());
                 processedCount.incrementAndGet();
             }, executor));
             total++;
         }
-        for (Map.Entry<UUID, MemberData> member : members.entrySet()) {
-            futures.add(CompletableFuture.completedFuture(member).thenAcceptAsync(ent -> {
-                processMember(ent.getKey(), ent.getValue());
+        for (Map.Entry<UUID, JsonObject> member : members.entrySet()) {
+            futures.add(CompletableFuture.completedFuture(member).thenAcceptAsync(e -> {
+                processMember(e.getKey(), e.getValue());
                 processedCount.incrementAndGet();
             }, executor));
             total++;
@@ -208,15 +180,5 @@ public class Importer implements Runnable {
     private void sendProgress(int processedCount, int total) {
         int percent = processedCount * 100 / total;
         this.notify.forEach(s -> Message.IMPORT_PROGRESS.send(s, percent, processedCount, total));
-    }
-
-    private record GuildData(String name, String iconUrl, boolean ranking, long rankingChannel, long suggestChannel) {
-
-    }
-    private record UserData(String username, String avatarUrl, long lastSeen) {
-
-    }
-    private record MemberData(String effectiveName, long experience, long voiceActivity, int previousPlacement) {
-
     }
 }

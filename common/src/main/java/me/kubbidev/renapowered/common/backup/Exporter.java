@@ -6,11 +6,12 @@ import me.kubbidev.renapowered.common.locale.Message;
 import me.kubbidev.renapowered.common.model.GuildEntity;
 import me.kubbidev.renapowered.common.model.MemberEntity;
 import me.kubbidev.renapowered.common.model.UserEntity;
-import me.kubbidev.renapowered.common.model.manager.StandardUserManager;
+import me.kubbidev.renapowered.common.model.manager.abstraction.Manager;
 import me.kubbidev.renapowered.common.plugin.RenaPlugin;
 import me.kubbidev.renapowered.common.sender.Sender;
+import me.kubbidev.renapowered.common.storage.Storage;
+import me.kubbidev.renapowered.common.storage.misc.entity.BaseEntity;
 import me.kubbidev.renapowered.common.util.CompletableFutures;
-import me.kubbidev.renapowered.common.util.ImmutableCollectors;
 import me.kubbidev.renapowered.common.util.gson.GsonProvider;
 import me.kubbidev.renapowered.common.util.gson.JObject;
 import net.kyori.adventure.text.Component;
@@ -25,6 +26,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -51,123 +54,120 @@ public abstract class Exporter implements Runnable {
     public void run() {
         JsonObject json = new JsonObject();
         json.add("metadata", new JObject()
-                .add("generatedBy", this.executor.getName())
+                .add("generatedBy", Exporter.this.executor.getName())
                 .add("generatedAt", DATE_FORMAT.format(new Date(System.currentTimeMillis())))
                 .toJson());
 
-        this.log.log("Gathering guild data...");
-        json.add("guilds", exportGuilds());
-
-        this.log.log("Gathering user data...");
-        json.add("users", exportUsers());
-
-        this.log.log("Gathering member data...");
-        json.add("members", exportMembers());
+        Process process = new Process(json);
+        process.run();
 
         processOutput(json);
     }
 
-    protected abstract void processOutput(JsonObject json);
-
-    private JsonObject exportUsers() {
-        // Users are migrated in separate threads.
-        // This is because there are likely to be a lot of them, and because we can.
-        // It's a big speed improvement, since the database/files are split up and can handle concurrent reads.
-
-        this.log.log("Finding a list of unique users to export.");
-
-        // find all of the unique users we need to export
-        StandardUserManager manager = this.plugin.getUserManager();
-        Set<Long> users = manager.getAll().keySet();
-        this.log.log("Found " + users.size() + " unique users to export.");
-
-        // create a threadpool to process the users concurrently
-        ExecutorService executor = Executors.newFixedThreadPool(32);
+    private class Process implements Runnable {
+        // create a thread pool to process the entities concurrently
+        private final ExecutorService executor = Executors.newFixedThreadPool(32);
 
         // A set of futures, which are really just the processes we need to wait for.
-        Set<CompletableFuture<Void>> futures = new HashSet<>();
+        private final Set<CompletableFuture<Void>> futures = new HashSet<>();
 
-        AtomicInteger userCount = new AtomicInteger(0);
-        Map<Long, JsonObject> out = Collections.synchronizedMap(new TreeMap<>());
+        private final AtomicInteger processedCount = new AtomicInteger(0);
+        private final JsonObject output;
 
-        // iterate through each entry.
-        for (Long userId : users) {
-            // register a task for the user, and schedule it's execution with the pool
-            futures.add(CompletableFuture.runAsync(() -> {
-                UserEntity userEntity = this.plugin.getStorage().loadEntity(UserEntity.class, userId, manager).join();
-                out.put(userId, new JObject()
-                        .add("username", userEntity.getUsername())
-                        .add("avatarUrl", userEntity.getAvatarUrl())
-                        .add("lastSeen", userEntity.getLastSeen())
-                        .toJson());
-                userCount.incrementAndGet();
-            }, executor));
+        public Process(JsonObject output) {
+            this.output = output;
         }
 
-        // all of the threads have been scheduled now and are running. we just need to wait for them all to complete
-        CompletableFuture<Void> overallFuture = CompletableFutures.allOf(futures);
+        @Override
+        public void run() {
+            log.log("Gathering guild data...");
+            Supplier<JsonObject> guilds = export(GuildEntity.class, plugin.getGuildManager(), guild -> new JObject()
+                    .add("name", guild.getName())
+                    .add("iconUrl", guild.getIconUrl())
+                    .add("ranking", guild.isRanking())
+                    .add("rankingChannel", guild.getRankingChannel())
+                    .toJson(), "guilds");
 
-        while (true) {
-            try {
-                overallFuture.get(5, TimeUnit.SECONDS);
-            } catch (InterruptedException | ExecutionException e) {
-                // abnormal error - just break
-                e.printStackTrace();
+            log.log("Gathering user data...");
+            Supplier<JsonObject> users = export(UserEntity.class, plugin.getUserManager(), user -> new JObject()
+                    .add("username", user.getUsername())
+                    .add("avatarUrl", user.getAvatarUrl())
+                    .add("lastSeen", user.getLastSeen())
+                    .toJson(), "users");
+
+            log.log("Gathering member data...");
+            Supplier<JsonObject> members = export(MemberEntity.class, plugin.getMemberManager(), member -> new JObject()
+                    .add("effectiveName", member.getEffectiveName())
+                    .add("experience", member.getExperience())
+                    .add("voiceActivity", member.getVoiceActivity())
+                    .add("previousPlacement", member.getPreviousPlacement())
+                    .toJson(), "members");
+
+            // all of the threads have been scheduled now and are running. we just need to wait for them all to complete
+            CompletableFuture<Void> overallFuture = CompletableFutures.allOf(futures);
+
+            while (true) {
+                try {
+                    overallFuture.get(5, TimeUnit.SECONDS);
+                } catch (InterruptedException | ExecutionException e) {
+                    // abnormal error - just break
+                    e.printStackTrace();
+                    break;
+                } catch (TimeoutException e) {
+                    // still executing - send a progress report and continue waiting
+                    log.logProgress("Exported " + this.processedCount.get() + " entities so far.");
+                    continue;
+                }
+
+                // process is complete
                 break;
-            } catch (TimeoutException e) {
-                // still executing - send a progress report and continue waiting
-                this.log.logProgress("Exported " + userCount.get() + " users so far.");
-                continue;
             }
 
-            // process is complete
-            break;
+            this.executor.shutdown();
+
+            this.output.add("guilds", guilds.get());
+            this.output.add("users", users.get());
+            this.output.add("members", members.get());
         }
 
-        executor.shutdown();
+        public <I, T extends BaseEntity> Supplier<JsonObject> export(
+                Class<T> type, Manager<I, T> manager, Function<T, JsonObject> mapping, String key) {
+            // Entities are migrated in separate threads.
+            // This is because there are likely to be a lot of them, and because we can.
+            // It's a big speed improvement, since the database/files are split up and can handle concurrent reads.
 
-        JsonObject outJson = new JsonObject();
-        for (Map.Entry<Long, JsonObject> entry : out.entrySet()) {
-            outJson.add(entry.getKey().toString(), entry.getValue());
+            log.log("Finding a list of unique " + key + " to export.");
+
+            // find all of the unique entities we need to export
+            Storage ds = plugin.getStorage();
+
+            @SuppressWarnings("unchecked")
+            Set<I> ids = (Set<I>) ds.getUniqueEntities(type).join();
+            log.log("Found " + ids.size() + " unique " + key + " to export.");
+
+            Map<Object, JsonObject> out = Collections.synchronizedMap(new TreeMap<>());
+
+            // iterate through each entity.
+            for (I id : ids) {
+                // register a task for the entity, and schedule it's execution with the pool
+                this.futures.add(CompletableFuture.runAsync(() -> {
+                    T t = plugin.getStorage().loadEntity(type, id, manager).join();
+                    out.put(t.getId(), mapping.apply(t));
+                    processedCount.incrementAndGet();
+                }, this.executor));
+            }
+
+            return () -> {
+                JsonObject outJson = new JsonObject();
+                for (Map.Entry<Object, JsonObject> entry : out.entrySet()) {
+                    outJson.add(entry.getKey().toString(), entry.getValue());
+                }
+                return outJson;
+            };
         }
-        return outJson;
     }
 
-    private JsonObject exportGuilds() {
-        JsonObject out = new JsonObject();
-        List<GuildEntity> guilds = this.plugin.getGuildManager().getAll().values().stream()
-                .sorted(Comparator.comparingLong(GuildEntity::getId).reversed())
-                .collect(ImmutableCollectors.toList());
-
-        for (GuildEntity guildEntity : guilds) {
-            out.add(guildEntity.getId().toString(), new JObject()
-                    .add("name", guildEntity.getName())
-                    .add("iconUrl", guildEntity.getIconUrl())
-                    .add("ranking", guildEntity.isRanking())
-                    .add("rankingChannel", guildEntity.getRankingChannel())
-                    .add("suggestChannel", guildEntity.getSuggestChannel())
-                    .toJson());
-        }
-        return out;
-    }
-
-    private JsonObject exportMembers() {
-        JsonObject out = new JsonObject();
-        List<MemberEntity> members = this.plugin.getMemberManager().getAll().values().stream()
-                .sorted(Comparator.comparingLong((MemberEntity value) -> value.getId().getLeastSignificantBits())
-                        .thenComparingLong(MemberEntity::getExperience).reversed())
-                .collect(ImmutableCollectors.toList());
-
-        for (MemberEntity memberEntity : members) {
-            out.add(memberEntity.getId().toString(), new JObject()
-                            .add("effectiveName", memberEntity.getEffectiveName())
-                            .add("experience", memberEntity.getExperience())
-                            .add("voiceActivity", memberEntity.getVoiceActivity())
-                            .add("previousPlacement", memberEntity.getPreviousPlacement())
-                    .toJson());
-        }
-        return out;
-    }
+    protected abstract void processOutput(JsonObject json);
 
     public static final class SaveFile extends Exporter {
         private final Path filePath;
