@@ -48,7 +48,7 @@ public class RankingService extends ScheduledTask implements AutoCloseable {
 
     }
 
-    @InitialLocalDay(dayOfWeek = DayOfWeek.SUNDAY)
+    @InitialLocalDay(dayOfWeek = DayOfWeek.TUESDAY)
     @InitialLocalTime(hour = 18, minute = 0, second = 0)
     @Override
     public void run() {
