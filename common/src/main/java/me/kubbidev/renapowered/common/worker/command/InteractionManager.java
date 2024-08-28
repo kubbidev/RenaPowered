@@ -62,6 +62,7 @@ public class InteractionManager extends DiscordEventListener {
         super(plugin);
         this.commands = ImmutableList.<InteractionCommand>builder()
                 .add(new AboutCommand())
+                .add(new BiographyCommand())
                 .add(new PingCommand())
                 .add(new ProfileCommand())
                 .add(new RChannelCommand())

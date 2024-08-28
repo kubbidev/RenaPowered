@@ -92,6 +92,10 @@ public class Importer implements Runnable {
         member.setVoiceActivity(o.get("voiceActivity").getAsLong());
         member.setPreviousPlacement(o.get("previousPlacement").getAsInt());
 
+        JsonElement biography = o.get("biography");
+        if (biography != null && !biography.isJsonNull()) {
+            member.setBiography(biography.getAsString());
+        }
         this.plugin.getStorage().saveEntity(member).join();
     }
 

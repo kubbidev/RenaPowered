@@ -1,5 +1,6 @@
 package me.kubbidev.renapowered.common.locale;
 
+import me.kubbidev.renapowered.common.model.MemberEntity;
 import me.kubbidev.renapowered.common.plugin.AbstractRenaPlugin;
 import me.kubbidev.renapowered.common.plugin.RenaPlugin;
 import me.kubbidev.renapowered.common.plugin.bootstrap.RenaBootstrap;
@@ -10,6 +11,7 @@ import me.kubbidev.renapowered.common.util.DurationFormatter;
 import me.kubbidev.renapowered.common.util.ImmutableCollectors;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.kyori.adventure.text.Component;
@@ -682,7 +684,15 @@ public interface Message {
             .args(text(username))
             .build();
 
-    Args4<Component, OnlineStatus, Long, Map<Activity.ActivityType, List<Activity>>> PROFILE_DESCRIPTION = (username, status, lastSeenMillis, activitiesMap) -> {
+    Args4<MemberEntity, Member, Long, Map<Activity.ActivityType, List<Activity>>> PROFILE_DESCRIPTION = (memberEntity, member, lastSeenMillis, activitiesMap) -> {
+        String username = member.getUser().getName();
+        String effective = member.getEffectiveName();
+
+        if (!Objects.equals(username, effective)) {
+            username += " (" + effective + ")";
+        }
+
+        OnlineStatus status = member.getOnlineStatus();
         String statusKey = "renapowered.command.profile.status."
                 + status.name().toLowerCase(Locale.ROOT)
                 .replace("_", "-")
@@ -700,7 +710,7 @@ public interface Message {
 
         Component activities;
         if (activitiesMap.isEmpty()) {
-            activities = Component.translatable("renapowered.command.profile.activity.empty")
+            activities = translatable("renapowered.command.profile.activity.empty")
                     .append(FULL_STOP);
         } else {
             Map<Component, String> activitiesFormatted = activitiesMap.entrySet().stream()
@@ -711,7 +721,7 @@ public interface Message {
                                         + entry.getKey().name().toLowerCase(Locale.ROOT)
                                         .replace("_", "-")
                                         .replace(" ", "-");
-                                return Component.translatable(activityKey);
+                                return translatable(activityKey);
                             },
                             entry -> entry.getValue().stream()
                                     .map(activity -> {
@@ -724,13 +734,22 @@ public interface Message {
                                     })
                                     .collect(Collectors.joining(", "))
                     ));
-            TextComponent.Builder builder = Component.text();
+            TextComponent.Builder builder = text();
             activitiesFormatted.forEach((key, value) -> {
-                builder.append(Component.text("- **")).append(key);
-                builder.append(Component.text(":** ")).append(Component.text(value));
-                builder.append(Component.newline());
+                builder.append(text("- **")).append(key);
+                builder.append(text(":** ")).append(text(value));
+                builder.append(newline());
             });
             activities = builder.build();
+        }
+
+        Component biography = translatable()
+                .key("renapowered.command.profile.biography").arguments(text("`/bio`"))
+                .append(FULL_STOP)
+                .build();
+
+        if (memberEntity.getBiography() != null) {
+            biography = text(memberEntity.getBiography());
         }
         return text()
                 // > You can add here some useful info about yourself using {} command
@@ -743,10 +762,7 @@ public interface Message {
                 // **__Activities__**
                 // {}
                 .append(text("> "))
-                .append(translatable()
-                        .key("renapowered.command.profile.biography")
-                        .args(text("`/bio`")) // TODO: implement /bio slash command in future
-                        .append(FULL_STOP))
+                .append(biography)
                 .append(newline())
                 .append(newline())
                 .append(text("**__")).append(translatable("renapowered.command.profile.commons"))
@@ -756,7 +772,7 @@ public interface Message {
                         .append(text("> **"))
                         .append(translatable("renapowered.command.profile.username"))
                         .append(text(":** "))
-                        .append(username))
+                        .append(text(username)))
                 .append(newline())
                 .append(text()
                         .append(text("> **"))
@@ -794,6 +810,12 @@ public interface Message {
     Args0 RANKING_OFF = () -> translatable()
             // The ranking and experience system are now disabled on the server.
             .key("renapowered.command.ranking.enabled.off")
+            .append(FULL_STOP)
+            .build();
+
+    Args0 BIOGRAPHY_SUCCESSFULLY = () -> translatable()
+            // Your biography has been successfully updated.
+            .key("renapowered.command.biography.successfully")
             .append(FULL_STOP)
             .build();
 
