@@ -47,5 +47,5 @@ dependencies {
 
 blossom {
     replaceTokenIn("src/main/java/me/kubbidev/renapowered/standalone/app/RenaApplication.java")
-    replaceToken("@version@", project.extra["fullVersion"])
+    replaceToken("@version@", project.extra["projectVersion"])
 }

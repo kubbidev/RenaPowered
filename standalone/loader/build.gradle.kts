@@ -19,7 +19,7 @@ tasks.processResources {
 }
 
 tasks.shadowJar {
-    archiveFileName = "RenaPowered-Standalone-${project.extra["fullVersion"]}.jar"
+    archiveFileName = "RenaPowered-Standalone-${project.extra["projectVersion"]}.jar"
 
     from(project(":standalone").tasks.shadowJar.get().archiveFile)
 
