@@ -35,6 +35,11 @@ public class MemberEntity implements BaseEntity {
     @Entry(name = "previous_placement")
     private int previousPlacement = -1;
 
+    @Setter
+    @Getter
+    @Entry(name = "biography")
+    private @Nullable String biography;
+
     public MemberEntity(UUID id) {
         this.id = id;
     }

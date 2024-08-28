@@ -103,6 +103,7 @@ public abstract class Exporter implements Runnable {
                     .add("experience", member.getExperience())
                     .add("voiceActivity", member.getVoiceActivity())
                     .add("previousPlacement", member.getPreviousPlacement())
+                    .add("biography", member.getBiography())
                     .toJson(), "members");
 
             // all of the threads have been scheduled now and are running. we just need to wait for them all to complete

@@ -1,7 +1,9 @@
 package me.kubbidev.renapowered.common.worker.commands;
 
 import me.kubbidev.renapowered.common.locale.Message;
+import me.kubbidev.renapowered.common.model.MemberEntity;
 import me.kubbidev.renapowered.common.model.UserEntity;
+import me.kubbidev.renapowered.common.model.manager.StandardMemberManager;
 import me.kubbidev.renapowered.common.model.manager.StandardUserManager;
 import me.kubbidev.renapowered.common.util.AdventureEmbed;
 import me.kubbidev.renapowered.common.worker.command.CommandContext;
@@ -14,7 +16,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.utils.ImageProxy;
-import net.kyori.adventure.text.Component;
 
 import java.time.Instant;
 import java.util.List;
@@ -39,13 +40,16 @@ public class ProfileCommand implements InteractionCommand {
         Map<Activity.ActivityType, List<Activity>> activities = member.getActivities().stream()
                 .collect(Collectors.groupingBy(Activity::getType));
 
+
+        MemberEntity memberEntity = StandardMemberManager.fetch(context.getPlugin(), member);
         AdventureEmbed builder = new AdventureEmbed();
+
         builder.color(0x1663ff);
         builder.thumbnail(member.getEffectiveAvatarUrl());
         builder.timestamp(Instant.now());
         builder.author(Message.PROFILE_TITLE.build(member.getEffectiveName()));
         builder.footer(Message.REQUESTED_BY.build(author.getEffectiveName()), author.getEffectiveAvatarUrl());
-        builder.description(Message.PROFILE_DESCRIPTION.build(getUsername(member), member.getOnlineStatus(), userEntity.getLastSeen(), activities));
+        builder.description(Message.PROFILE_DESCRIPTION.build(memberEntity, member, userEntity.getLastSeen(), activities));
 
         member.getUser().retrieveProfile().submit().thenAccept(profile -> {
             ImageProxy userBanner = profile.getBanner();
@@ -62,15 +66,5 @@ public class ProfileCommand implements InteractionCommand {
         return Commands.slash("profile", "Display the supplied user profile.")
                 .addOption(OptionType.USER, "user", "The user to show his profile.")
                 .setGuildOnly(true);
-    }
-
-    private Component getUsername(Member member) {
-        String username = member.getUser().getName();
-        String effective = member.getEffectiveName();
-
-        if (!Objects.equals(username, effective)) {
-            username += " (" + effective + ")";
-        }
-        return Component.text(username);
     }
 }
