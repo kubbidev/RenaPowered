@@ -90,7 +90,7 @@ public class InteractionManager extends DiscordEventListener {
 
         for (InteractionCommand command : this.commands.values()) {
             DiscordCommand annotation = getDiscordCommand(command);
-            if (!annotation.visible()) {
+            if (annotation.visible()) {
                 action = action.addCommands(command.getSlashCommand());
             }
         }
