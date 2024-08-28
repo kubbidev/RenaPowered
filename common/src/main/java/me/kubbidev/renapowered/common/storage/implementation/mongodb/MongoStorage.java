@@ -34,7 +34,7 @@ public class MongoStorage implements StorageImplementation {
     /**
      * Map storing all {@link MongoEntity} for iteration facility
      */
-    private final Map<Class<?>, MongoEntity> entitiesMap = LoadingMap.of(this::buildStoredEntity);
+    private final Map<Class<?>, MongoEntity> entitiesMap = LoadingMap.of(MongoEntity::new);
 
     public MongoStorage(RenaPlugin plugin, StorageCredentials configuration, String prefix, String connectionUri) {
         this.plugin = plugin;
@@ -114,22 +114,6 @@ public class MongoStorage implements StorageImplementation {
         return metadata;
     }
 
-    private MongoEntity buildStoredEntity(Class<?> entityType) {
-        MongoEntity entity = null;
-        try {
-            entity = new MongoEntity(entityType);
-        } catch (Exception e) {
-            this.plugin.getLogger().severe("Could not instantiate stored entity: "
-                    + entityType.getSimpleName(), e);
-        }
-        return entity;
-    }
-
-    public MongoEntity getEntity(Class<?> entityType) {
-        return Objects.requireNonNull(this.entitiesMap.get(entityType), "MongoEntity could not be found for class: "
-                + entityType.getSimpleName() + ", make sure that your class is register as");
-    }
-
     /**
      * This record represent an data object used for caching
      * result from database.
@@ -146,73 +130,69 @@ public class MongoStorage implements StorageImplementation {
 
     @Override
     public <I, T extends BaseEntity> T loadEntity(Class<T> type, I id, Manager<I, T> manager) throws Exception {
-        MongoEntity entity = getEntity(type);
-        return buildInstance(entity, manager, id, loadEntity0(id, entity));
-    }
+        MongoEntity entity = this.entitiesMap.get(type);
+        MongoData mongoData = null;
 
-    private <I> MongoData loadEntity0(I id, MongoEntity entity) {
         MongoCollection<Document> c = this.database.getCollection(this.prefix + entity.getCollectionName());
-        try (MongoCursor<Document> cursor = c.find(Filters.eq("_id", id)).iterator()) {
+        try (MongoCursor<Document> cursor = c.find(Filters.eq(entity.getId(), id)).iterator()) {
             if (cursor.hasNext()) {
-                return fillMongoData(entity, cursor.next());
-            } else {
-                return null;
+                mongoData = fillMongoData(entity, cursor.next());
             }
         }
+        return buildInstance(entity, manager, id, mongoData);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <I, T extends BaseEntity> void loadAllEntities(Class<T> type, Manager<I, T> manager) throws Exception {
-        MongoEntity entity = getEntity(type);
-        Map<I, MongoData> dataMap = loadAllEntities0(entity);
-        for (Map.Entry<I, MongoData> entry : dataMap.entrySet()) {
-            buildInstance(entity, manager,
-                    entry.getKey(),
-                    entry.getValue()
-            );
-        }
-        manager.retainAll(dataMap.keySet());
-    }
-
-    private <I> Map<I, MongoData> loadAllEntities0(MongoEntity entity) {
+        MongoEntity entity = this.entitiesMap.get(type);
         Map<I, MongoData> result = new HashMap<>();
 
         MongoCollection<Document> c = this.database.getCollection(this.prefix + entity.getCollectionName());
         try (MongoCursor<Document> cursor = c.find().iterator()) {
             while (cursor.hasNext()) {
                 Document d = cursor.next();
-                result.put(getDocumentId(d), fillMongoData(entity, d));
+                result.put((I) d.get(entity.getId()), fillMongoData(entity, d));
             }
         }
-        return result;
+
+        for (Map.Entry<I, MongoData> e : result.entrySet()) {
+            buildInstance(entity, manager,
+                    e.getKey(),
+                    e.getValue());
+        }
+        manager.retainAll(result.keySet());
     }
 
     @Override
     public <T extends BaseEntity> void saveEntity(T o) throws Exception {
-        MongoEntity entity = getEntity(o.getClass());
-        saveEntity0(o, entity);
-    }
-
-    private <T extends BaseEntity> void saveEntity0(T o, MongoEntity entity)
-            throws IllegalAccessException {
+        MongoEntity entity = this.entitiesMap.get(o.getClass());
 
         MongoCollection<Document> c = this.database.getCollection(this.prefix + entity.getCollectionName());
-        c.replaceOne(Filters.eq("_id", o.getId()), entityToDocument(entity, o), new ReplaceOptions().upsert(true));
+        Document d = new Document();
+        for (MongoEntry entry : entity.getEntries()) {
+            Field field = entry.field();
+
+            if (field.trySetAccessible()) {
+                d.append(entry.name(), field.get(o));
+            }
+        }
+
+        c.replaceOne(Filters.eq(entity.getId(), o.getId()), d,
+                new ReplaceOptions().upsert(true));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <I, T extends BaseEntity> Set<I> getUniqueEntities(Class<T> type) {
-        MongoEntity entity = getEntity(type);
-        return getUniqueEntities0(entity);
-    }
-
-    private <I> Set<I> getUniqueEntities0(MongoEntity entity) {
+        MongoEntity entity = this.entitiesMap.get(type);
         Set<I> ids = new HashSet<>();
+
         MongoCollection<Document> c = this.database.getCollection(this.prefix + entity.getCollectionName());
         try (MongoCursor<Document> cursor = c.find().iterator()) {
             while (cursor.hasNext()) {
                 try {
-                    ids.add(getDocumentId(cursor.next()));
+                    ids.add((I) cursor.next().get(entity.getId()));
                 } catch (IllegalArgumentException e) {
                     // ignore
                 }
@@ -226,15 +206,15 @@ public class MongoStorage implements StorageImplementation {
 
         T o = manager.getOrMake(id);
         if (data != null) {
-            for (MongoColumn column : entity.getColumnList()) {
-                Field field = column.field();
+            for (MongoEntry entry : entity.getEntries()) {
+                Field field = entry.field();
 
                 if (Modifier.isFinal(field.getModifiers())) {
                     continue;
                 }
 
                 if (field.trySetAccessible()) {
-                    field.set(o, data.resultSet.get(column.name()));
+                    field.set(o, data.resultSet.get(entry.name()));
                 }
             }
         }
@@ -244,28 +224,9 @@ public class MongoStorage implements StorageImplementation {
     private static MongoData fillMongoData(MongoEntity entity, Document d) {
         Map<String, Object> objectMap = new HashMap<>();
 
-        for (MongoColumn mongoColumn : entity.getColumnList()) {
-            objectMap.put(mongoColumn.name(), d.get(mongoColumn.name()));
+        for (MongoEntry entry : entity.getEntries()) {
+            objectMap.put(entry.name(), d.get(entry.name()));
         }
         return new MongoData(objectMap);
-    }
-
-    private static Document entityToDocument(MongoEntity entity, Object o)
-            throws IllegalAccessException {
-
-        Document document = new Document();
-        for (MongoColumn column : entity.getColumnList()) {
-            Field field = column.field();
-
-            if (field.trySetAccessible()) {
-                document.append(column.name(), field.get(o));
-            }
-        }
-        return document;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <I> I getDocumentId(Document document) {
-        return (I) document.get("_id");
     }
 }

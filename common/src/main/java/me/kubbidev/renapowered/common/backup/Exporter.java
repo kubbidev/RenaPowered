@@ -15,6 +15,7 @@ import me.kubbidev.renapowered.common.util.CompletableFutures;
 import me.kubbidev.renapowered.common.util.gson.GsonProvider;
 import me.kubbidev.renapowered.common.util.gson.JObject;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -33,6 +34,7 @@ import java.util.zip.GZIPOutputStream;
 /**
  * Handles export operations
  */
+@ApiStatus.Experimental
 public abstract class Exporter implements Runnable {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
@@ -58,13 +60,13 @@ public abstract class Exporter implements Runnable {
                 .add("generatedAt", DATE_FORMAT.format(new Date(System.currentTimeMillis())))
                 .toJson());
 
-        Process process = new Process(json);
-        process.run();
+        FileProcessor fileProcessor = new FileProcessor(json);
+        fileProcessor.run();
 
         processOutput(json);
     }
 
-    private class Process implements Runnable {
+    private class FileProcessor implements Runnable {
         // create a thread pool to process the entities concurrently
         private final ExecutorService executor = Executors.newFixedThreadPool(32);
 
@@ -74,7 +76,7 @@ public abstract class Exporter implements Runnable {
         private final AtomicInteger processedCount = new AtomicInteger(0);
         private final JsonObject output;
 
-        public Process(JsonObject output) {
+        public FileProcessor(JsonObject output) {
             this.output = output;
         }
 
@@ -104,7 +106,7 @@ public abstract class Exporter implements Runnable {
                     .toJson(), "members");
 
             // all of the threads have been scheduled now and are running. we just need to wait for them all to complete
-            CompletableFuture<Void> overallFuture = CompletableFutures.allOf(futures);
+            CompletableFuture<Void> overallFuture = CompletableFutures.allOf(this.futures);
 
             while (true) {
                 try {
@@ -153,7 +155,7 @@ public abstract class Exporter implements Runnable {
                 this.futures.add(CompletableFuture.runAsync(() -> {
                     T t = plugin.getStorage().loadEntity(type, id, manager).join();
                     out.put(t.getId(), mapping.apply(t));
-                    processedCount.incrementAndGet();
+                    this.processedCount.incrementAndGet();
                 }, this.executor));
             }
 

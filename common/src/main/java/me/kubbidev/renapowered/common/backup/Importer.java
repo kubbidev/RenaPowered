@@ -12,6 +12,7 @@ import me.kubbidev.renapowered.common.util.Uuids;
 import me.kubbidev.renapowered.common.model.GuildEntity;
 import me.kubbidev.renapowered.common.model.MemberEntity;
 import me.kubbidev.renapowered.common.model.UserEntity;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -20,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Handles import operations
  */
+@ApiStatus.Experimental
 public class Importer implements Runnable {
 
     private final RenaPlugin plugin;

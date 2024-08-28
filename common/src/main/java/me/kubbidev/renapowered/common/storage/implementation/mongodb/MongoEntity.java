@@ -4,23 +4,29 @@ import com.google.common.collect.ImmutableList;
 import lombok.Getter;
 import me.kubbidev.renapowered.common.storage.implementation.mongodb.annotation.Entry;
 import me.kubbidev.renapowered.common.storage.implementation.mongodb.annotation.Entity;
+import me.kubbidev.renapowered.common.storage.implementation.mongodb.annotation.Id;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
 public final class MongoEntity {
-    private final List<MongoColumn> columnList = new ArrayList<>();
+    private final List<MongoEntry> entries = new ArrayList<>();
 
     @Getter
     private String collectionName;
+    private String id = "_id";
 
     public MongoEntity(Class<?> tableType) {
         processEntity(tableType);
         processEntries(tableType);
     }
 
-    public List<MongoColumn> getColumnList() {
-        return ImmutableList.copyOf(this.columnList);
+    public List<MongoEntry> getEntries() {
+        return ImmutableList.copyOf(this.entries);
+    }
+
+    public String getId() {
+        return this.id.equalsIgnoreCase("id") ? '_' + this.id : this.id;
     }
 
     private void processEntity(Class<?> tableType) {
@@ -34,6 +40,11 @@ public final class MongoEntity {
 
     private void processEntries(Class<?> tableType) {
         for (Field field : tableType.getDeclaredFields()) {
+            var id = field.getAnnotation(Id.class);
+            if (id != null) {
+                this.id = id.name();
+            }
+
             var annotation = field.getAnnotation(Entry.class);
             if (annotation == null) {
                 continue;
@@ -41,8 +52,8 @@ public final class MongoEntity {
             if (!field.trySetAccessible()) {
                 continue;
             }
-            MongoColumn column = new MongoColumn(this, field, annotation.name());
-            this.columnList.add(column);
+            MongoEntry entry = new MongoEntry(this, field, annotation.name());
+            this.entries.add(entry);
         }
     }
 
@@ -54,12 +65,12 @@ public final class MongoEntity {
         if (!(o instanceof MongoEntity other))
             return false;
 
-        return this.collectionName.equals(other.collectionName);
+        return Objects.equals(this.collectionName, other.collectionName);
     }
 
     @Override
     public int hashCode() {
-        return this.collectionName.hashCode();
+        return Objects.hashCode(this.collectionName);
     }
 
     @Override
