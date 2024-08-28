@@ -18,14 +18,13 @@ import java.util.concurrent.Executors;
 /**
  * Pre-loads and pre-relocates all possible dependencies.
  */
-@SuppressWarnings("ConfusingMainMethod")
 public class StandaloneDependencyPreloader {
 
     public static void main(String[] args) throws Exception {
-        main();
+        start();
     }
 
-    public static void main() throws Exception {
+    public static void start() throws Exception {
         Path cacheDirectory = Paths.get("data").resolve("libs");
         MoreFiles.createDirectoriesIfNotExists(cacheDirectory);
 

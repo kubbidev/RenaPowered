@@ -15,9 +15,8 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.kyori.adventure.text.Component;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
-@DiscordCommand(name = "ranking_enabled", subCommand = false)
+@DiscordCommand(name = "ranking_enabled", visible = true)
 public class REnabledCommand implements InteractionCommand {
 
     @Override
@@ -39,8 +38,8 @@ public class REnabledCommand implements InteractionCommand {
     }
 
     @Override
-    public Supplier<SlashCommandData> getSlashCommand() {
-        return () -> Commands.slash("ranking_enabled", "Controls the servers ranking and experience system.")
+    public SlashCommandData getSlashCommand() {
+        return Commands.slash("ranking_enabled", "Controls the servers ranking and experience system.")
                 .addOption(OptionType.BOOLEAN, "action", "Whether to enable/disable the system.", true)
                 .setGuildOnly(true)
                 .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER));

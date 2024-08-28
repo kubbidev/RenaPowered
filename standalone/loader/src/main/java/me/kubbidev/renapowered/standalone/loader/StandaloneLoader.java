@@ -36,7 +36,7 @@ public class StandaloneLoader implements ShutdownCallback {
 
     // Entrypoint
     public static void main(String[] args) {
-        Thread.setDefaultUncaughtExceptionHandler((t, e) -> LOGGER.error("Exception in thread " + t.getName(), e));
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> LOGGER.error("Exception in thread {}", t.getName(), e));
 
         StandaloneLoader loader = new StandaloneLoader();
         loader.start(args);
@@ -54,7 +54,7 @@ public class StandaloneLoader implements ShutdownCallback {
         if (args.length == 1 && args[0].equals("preloadDependencies")) {
             try {
                 Class<?> clazz = this.loader.loadClass(BOOTSTRAP_DEPENDENCY_PRELOADER_CLASS);
-                clazz.getMethod("main").invoke(null);
+                clazz.getMethod("start").invoke(null);
             } catch (Exception e) {
                 e.printStackTrace();
             }

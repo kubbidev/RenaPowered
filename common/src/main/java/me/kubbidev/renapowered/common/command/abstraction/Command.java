@@ -8,7 +8,7 @@ import me.kubbidev.renapowered.common.command.util.ArgumentList;
 import me.kubbidev.renapowered.common.sender.Sender;
 import me.kubbidev.renapowered.common.plugin.RenaPlugin;
 import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;

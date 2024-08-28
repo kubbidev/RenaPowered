@@ -7,37 +7,37 @@ dependencies {
 
     compileOnly(project(":common:loader-utils"))
 
-    compileOnly("org.slf4j:slf4j-api:1.7.30")
-    compileOnly("org.apache.logging.log4j:log4j-api:2.14.0")
+    compileOnly("org.slf4j:slf4j-api:2.0.13")
+    compileOnly("org.apache.logging.log4j:log4j-api:2.17.2")
 
-    api("net.kyori:adventure-api:4.11.0") {
+    api("net.kyori:adventure-api:4.17.0") {
         exclude(module = "adventure-bom")
         exclude(module = "checker-qual")
         exclude(module = "annotations")
     }
 
-    api("net.kyori:adventure-text-serializer-gson:4.11.0") {
+    api("net.kyori:adventure-text-serializer-gson:4.17.0") {
         exclude(module = "adventure-bom")
         exclude(module = "adventure-api")
         exclude(module = "gson")
     }
 
-    api("net.kyori:adventure-text-serializer-legacy:4.11.0") {
+    api("net.kyori:adventure-text-serializer-legacy:4.17.0") {
         exclude(module = "adventure-bom")
         exclude(module = "adventure-api")
     }
 
-    api("net.kyori:adventure-text-serializer-plain:4.11.0") {
+    api("net.kyori:adventure-text-serializer-plain:4.17.0") {
         exclude(module = "adventure-bom")
         exclude(module = "adventure-api")
     }
 
-    api("net.kyori:adventure-text-minimessage:4.11.0") {
+    api("net.kyori:adventure-text-minimessage:4.17.0") {
         exclude(module = "adventure-bom")
         exclude(module = "adventure-api")
     }
 
-    compileOnly("net.dv8tion:JDA:5.0.0-beta.24") {
+    compileOnly("net.dv8tion:JDA:5.1.0") {
         exclude(module = "opus-java")
     }
 
@@ -52,12 +52,6 @@ dependencies {
         isTransitive = false
     }
     api("org.spongepowered:configurate-yaml:3.7.2") {
-        isTransitive = false
-    }
-    api("org.spongepowered:configurate-gson:3.7.2") {
-        isTransitive = false
-    }
-    api("org.spongepowered:configurate-hocon:3.7.2") {
         isTransitive = false
     }
 

@@ -13,29 +13,29 @@ dependencies {
     api("com.google.guava:guava:31.1-jre")
     api("io.netty:netty-all:4.1.93.Final")
 
-    api("net.kyori:adventure-api:4.14.0") {
+    api("net.kyori:adventure-api:4.17.0") {
         exclude(module = "adventure-bom")
         exclude(module = "checker-qual")
         exclude(module = "annotations")
     }
-    api("net.kyori:adventure-text-serializer-gson:4.14.0") {
+    api("net.kyori:adventure-text-serializer-gson:4.17.0") {
         exclude(module = "adventure-bom")
         exclude(module = "adventure-api")
         exclude(module = "gson")
     }
-    api("net.kyori:adventure-text-serializer-legacy:4.14.0") {
+    api("net.kyori:adventure-text-serializer-legacy:4.17.0") {
         exclude(module = "adventure-bom")
         exclude(module = "adventure-api")
     }
-    api("net.kyori:adventure-text-serializer-plain:4.14.0") {
+    api("net.kyori:adventure-text-serializer-plain:4.17.0") {
         exclude(module = "adventure-bom")
         exclude(module = "adventure-api")
     }
-    api("net.kyori:adventure-text-minimessage:4.14.0") {
+    api("net.kyori:adventure-text-minimessage:4.17.0") {
         exclude(module = "adventure-bom")
         exclude(module = "adventure-api")
     }
-    api("net.kyori:adventure-text-serializer-ansi:4.14.0") {
+    api("net.kyori:adventure-text-serializer-ansi:4.17.0") {
         exclude(module = "adventure-bom")
         exclude(module = "adventure-api")
         exclude(module = "annotations")

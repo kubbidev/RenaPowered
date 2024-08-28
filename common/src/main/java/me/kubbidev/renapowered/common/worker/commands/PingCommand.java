@@ -7,9 +7,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.kyori.adventure.text.Component;
 
-import java.util.function.Supplier;
-
-@DiscordCommand(name = "ping", subCommand = false)
+@DiscordCommand(name = "ping", visible = true)
 public class PingCommand implements InteractionCommand {
 
     @Override
@@ -18,7 +16,7 @@ public class PingCommand implements InteractionCommand {
     }
 
     @Override
-    public Supplier<SlashCommandData> getSlashCommand() {
-        return () -> Commands.slash("ping", "Pong!");
+    public SlashCommandData getSlashCommand() {
+        return Commands.slash("ping", "Pong!");
     }
 }

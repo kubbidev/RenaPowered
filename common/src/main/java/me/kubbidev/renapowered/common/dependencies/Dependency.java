@@ -36,10 +36,10 @@ public enum Dependency {
             "b30RhOF6kHiHl+O5suNLh/+eAr1iOFEFLXhwkHHDu4I="
     ),
     ADVENTURE(
-            "me{}lucko",
+            "net{}kyori",
             "adventure-api",
-            "4.13.0",
-            "gcmYlY1KDrzbnE9nB8rA44oBZKPSMvv9kNRefoEuud0=",
+            "4.17.0",
+            "FcjC6xpp2LG8kU9VQ1PajufPB0wFyAdNqYmK7lxw0Ng=",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     CAFFEINE(
@@ -67,14 +67,14 @@ public enum Dependency {
     SLF4J_SIMPLE(
             "org.slf4j",
             "slf4j-simple",
-            "1.7.30",
-            "i5J5y/9rn4hZTvrjzwIDm2mVAw7sAj7UOSh0jEFnD+4="
+            "2.0.13",
+            "MVP+HWic/7lPFTC1hHDDBmhbpohE3ohXEW47bruB2fc="
     ),
     SLF4J_API(
             "org.slf4j",
             "slf4j-api",
-            "1.7.30",
-            "zboHlk0btAoHYUhcax6ML4/Z6x0ZxTkorA1/lRAQXFc="
+            "2.0.13",
+            "58KkjoUVuh9J+mN9V7Ti9ZCz9b2XQHrGmcOqXvsSBKk="
     ),
     MONGODB_DRIVER_CORE(
             "org.mongodb",
@@ -115,13 +115,6 @@ public enum Dependency {
             "XF2LzWLkSV0wyQRDt33I+gDlf3t2WzxH1h8JCZZgPp4=",
             Relocation.of("configurate", "ninja{}leaping{}configurate")
     ),
-    CONFIGURATE_GSON(
-            "org{}spongepowered",
-            "configurate-gson",
-            "3.7.2",
-            "9S/mp3Ig9De7NNd6+2kX+L4R90bHnAosSNVbFjrl7sM=",
-            Relocation.of("configurate", "ninja{}leaping{}configurate")
-    ),
     CONFIGURATE_YAML(
             "org{}spongepowered",
             "configurate-yaml",
@@ -136,38 +129,23 @@ public enum Dependency {
             "NURqFCFDXUXkxqwN47U3hSfVzCRGwHGD4kRHcwzh//o=",
             Relocation.of("yaml", "org{}yaml{}snakeyaml")
     ),
-    CONFIGURATE_HOCON(
-            "org{}spongepowered",
-            "configurate-hocon",
-            "3.7.2",
-            "GOORZlK1FKLzdIm7dKyyXtBdvk7Z89HARAd2H6NiWSY=",
-            Relocation.of("configurate", "ninja{}leaping{}configurate"),
-            Relocation.of("hocon", "com{}typesafe{}config")
-    ),
-    HOCON_CONFIG(
-            "com{}typesafe",
-            "config",
-            "1.4.1",
-            "TAqn4iPHXIhAxB/Bg9TNMRgUCh7lA+PgjOZu0nlMlI8=",
-            Relocation.of("hocon", "com{}typesafe{}config")
-    ),
     JACKSON_CORE(
             "com.fasterxml.jackson.core",
             "jackson-core",
-            "2.17.0",
-            "Vb4TD2poA4CIomGFbE44POeZV6D8GinsshOp79bvQ4k="
+            "2.17.2",
+            "choYkkHasFJdnoWOXLYE0+zA7eCB4t531vNPpXeaW0Y="
     ),
     JACKSON_DATABIND(
             "com.fasterxml.jackson.core",
             "jackson-databind",
-            "2.17.0",
-            "0O1bVMsbC7sIKOJM51KkOgBtwYizTjpK4yOKzHtjdBg="
+            "2.17.2",
+            "wEmT8zwPhFNCZTeE8U84Nz0AUoDmNZ21+AhwHPrnPAw="
     ),
     JACKSON_ANNOTATIONS(
             "com.fasterxml.jackson.core",
             "jackson-annotations",
-            "2.17.0",
-            "hWJWmgAdRuhOojgCJX4zyPaLJOtHweDv0TOgNyxRKVk="
+            "2.17.2",
+            "hzpgbiNQeWn5u76pOdXhknSoh3XqWhabp+LXlapRVuE="
     ),
     COLLECTIONS4(
             "org.apache.commons",
@@ -190,16 +168,24 @@ public enum Dependency {
             "4f7U1xiobSfF67QngQVQ+lwDJg41DkGoXvLC226sCFY=",
             Relocation.of("trove4j", "gnu{}trove")
     ),
+    TINK(
+            "com.google.crypto.tink",
+            "tink",
+            "1.14.1",
+            "Bd1fgaBJH1oKtIkkP05fe4m9beC577ZQE/8+PHLn4vA=",
+            Relocation.of("tink", "com{}google{}crypto{}tinkt")
+    ),
     JDA(
             "net{}dv8tion",
             "JDA",
-            "5.0.0-beta.24",
-            "Az4P6A3Iyos6psCRJFDK3igTNAmw1pXo8E/uhOcPazQ=",
+            "5.1.0",
+            "JsPc1/V/jDBceK8SGi2MwN8oAed87MB5PXxmeR1B8aI=",
             Relocation.of(RelocationHelper.OKHTTP3_STRING, RelocationHelper.OKHTTP3_STRING),
             Relocation.of(RelocationHelper.OKIO_STRING, RelocationHelper.OKIO_STRING),
             Relocation.of("collections4", "org{}apache{}commons{}collections4"),
             Relocation.of("neovisionaries", "com{}neovisionaries{}ws{}client"),
             Relocation.of("trove4j", "gnu{}trove"),
+            Relocation.of("tink", "com{}google{}crypto{}tinkt"),
             Relocation.of("jda", "net{}dv8tion{}jda")
     );
 

@@ -185,10 +185,7 @@ public class RankingService extends ScheduledTask implements AutoCloseable {
     }
 
     private CompletableFuture<Void> postLeaderboard(GuildMessageChannel channel, RankingBuilder printer) {
-        // get the guild locale, return the guild community locale, otherwise
-        // fallback to english if the guild is not a community
         Locale guildLocale = channel.getGuild().getLocale().toLocale();
-
         return this.plugin.getDiscordService().sendMessage(channel, printer.build(), guildLocale)
                 .thenAccept(m -> {
                     // publish the message after sending it automatically

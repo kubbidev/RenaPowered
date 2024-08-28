@@ -9,9 +9,8 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.time.ZonedDateTime;
-import java.util.function.Supplier;
 
-@DiscordCommand(name = "about", subCommand = false)
+@DiscordCommand(name = "about", visible = true)
 public class AboutCommand implements InteractionCommand {
 
     @Override
@@ -42,7 +41,7 @@ public class AboutCommand implements InteractionCommand {
     }
 
     @Override
-    public Supplier<SlashCommandData> getSlashCommand() {
-        return () -> Commands.slash("about", "Prints general information about the active bot instance.");
+    public SlashCommandData getSlashCommand() {
+        return Commands.slash("about", "Prints general information about the active bot instance.");
     }
 }

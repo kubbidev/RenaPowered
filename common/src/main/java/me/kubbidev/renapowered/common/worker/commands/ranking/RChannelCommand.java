@@ -15,9 +15,8 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
-@DiscordCommand(name = "ranking_channel", subCommand = false)
+@DiscordCommand(name = "ranking_channel", visible = true)
 public class RChannelCommand implements InteractionCommand {
     @Override
     public void onPerform(CommandContext context) {
@@ -36,8 +35,8 @@ public class RChannelCommand implements InteractionCommand {
     }
 
     @Override
-    public Supplier<SlashCommandData> getSlashCommand() {
-        return () -> Commands.slash("ranking_channel", "Configure the channel were the leaderboard will be broadcast.")
+    public SlashCommandData getSlashCommand() {
+        return Commands.slash("ranking_channel", "Configure the channel were the leaderboard will be broadcast.")
                 .addOption(OptionType.CHANNEL, "channel", "The channel to broadcast.", true)
                 .setGuildOnly(true)
                 .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER));

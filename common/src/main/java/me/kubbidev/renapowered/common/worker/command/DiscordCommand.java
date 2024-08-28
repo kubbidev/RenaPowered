@@ -8,5 +8,5 @@ public @interface DiscordCommand {
 
     String name();
 
-    boolean subCommand();
+    boolean visible();
 }

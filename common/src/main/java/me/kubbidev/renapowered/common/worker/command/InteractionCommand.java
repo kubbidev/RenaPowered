@@ -2,8 +2,6 @@ package me.kubbidev.renapowered.common.worker.command;
 
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
-import java.util.function.Supplier;
-
 public interface InteractionCommand {
 
     /**
@@ -14,9 +12,9 @@ public interface InteractionCommand {
     void onPerform(CommandContext context);
 
     /**
-     * Returns a {@link Supplier} of {@link SlashCommandData} request when updating discord application commands list.
+     * Returns a {@link SlashCommandData} requested when updating discord application commands list.
      *
-     * @return a supplier of slash command data
+     * @return a slash command data
      */
-    Supplier<SlashCommandData> getSlashCommand();
+    SlashCommandData getSlashCommand();
 }

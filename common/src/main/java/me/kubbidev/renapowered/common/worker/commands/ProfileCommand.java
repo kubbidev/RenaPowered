@@ -20,10 +20,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-@DiscordCommand(name = "profile", subCommand = false)
+@DiscordCommand(name = "profile", visible = true)
 public class ProfileCommand implements InteractionCommand {
 
     @Override
@@ -59,8 +58,8 @@ public class ProfileCommand implements InteractionCommand {
     }
 
     @Override
-    public Supplier<SlashCommandData> getSlashCommand() {
-        return () -> Commands.slash("profile", "Display the supplied user profile.")
+    public SlashCommandData getSlashCommand() {
+        return Commands.slash("profile", "Display the supplied user profile.")
                 .addOption(OptionType.USER, "user", "The user to show his profile.")
                 .setGuildOnly(true);
     }

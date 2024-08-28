@@ -170,6 +170,7 @@ public abstract class AbstractRenaPlugin implements RenaPlugin {
                 Dependency.COLLECTIONS4,
                 Dependency.NEOVISIONARIES,
                 Dependency.TROVE4J,
+                Dependency.TINK,
                 Dependency.JDA
         );
     }

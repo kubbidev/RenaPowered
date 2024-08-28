@@ -42,12 +42,12 @@ import java.util.function.Function;
 @EventHandler
 public class DiscordService extends DiscordEventListener implements AutoCloseable {
     /**
-     * The event manager responsible for registering and handling generic events
+     * The event manager responsible for registering and handling generic events.
      */
     private final EventManager eventManager;
 
     /**
-     * The command manager used to register and execute discord commands
+     * The command manager used to register and execute discord commands.
      */
     private final InteractionManager interactionManager;
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
@@ -56,9 +56,14 @@ public class DiscordService extends DiscordEventListener implements AutoCloseabl
     private BirthdayService birthdayService;
 
     /**
-     * Shard Manager responsible of the connection between our application and the discord bot
+     * Shard Manager responsible of the connection between our application and the discord bot.
      */
     private ShardManager shardManager;
+
+    /**
+     * the number of total shard loaded for now.
+     */
+    private int shards = 0;
 
     public DiscordService(RenaPlugin plugin) {
         super(plugin);
@@ -94,12 +99,6 @@ public class DiscordService extends DiscordEventListener implements AutoCloseabl
                 .build();
     }
 
-    private void registerPlatformListeners() {
-        this.shardManager.addEventListener(getInteractionManager());
-        this.shardManager.addEventListener(new ActivityListener(this.plugin));
-        this.shardManager.addEventListener(new MemberListener(this.plugin));
-    }
-
     @Override
     public void close() {
         // close ranking service
@@ -121,6 +120,9 @@ public class DiscordService extends DiscordEventListener implements AutoCloseabl
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         getInteractionManager().buildCommands(event.getJDA());
+        if (++this.shards < this.plugin.getConfiguration().get(ConfigKeys.TOTAL_SHARDS)) {
+            return;
+        }
 
         // register listeners
         registerPlatformListeners();
@@ -130,6 +132,12 @@ public class DiscordService extends DiscordEventListener implements AutoCloseabl
 
         this.birthdayService = new BirthdayService(this.plugin);
         this.birthdayService.schedule();
+    }
+
+    private void registerPlatformListeners() {
+        this.shardManager.addEventListener(getInteractionManager());
+        this.shardManager.addEventListener(new ActivityListener(this.plugin));
+        this.shardManager.addEventListener(new MemberListener(this.plugin));
     }
 
     @Override
