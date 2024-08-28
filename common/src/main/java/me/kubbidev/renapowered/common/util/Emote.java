@@ -6,17 +6,17 @@ public enum Emote {
     // animated emotes,
 
     // static emotes,
-    RED_TRIANGLE(  "red_triangle",   "1278300317775167530", false),
-    GREEN_TRIANGLE("green_triangle", "1278300312657989693", false),
-    EQUAL(         "equal",          "1278300311114481787", false),
-    EMPTY(         "empty",          "1278300309298352129", false),
+    RED_TRIANGLE(  "red_triangle",   "1278348331873206372", false),
+    GREEN_TRIANGLE("green_triangle", "1278348287279235184", false),
+    EQUAL(         "equal",          "1278348275313016913", false),
+    EMPTY(         "empty",          "1278348264239792218", false),
 
     // online status
-    ONLINE(        "online",         "1278300315984203849", false),
-    IDLE(          "idle",           "1278300313622810676", false),
-    DO_NOT_DISTURB("dnb",            "1278300307952107520", false),
-    INVISIBLE(     "invisible",      "1278300314872578140", false),
-    OFFLINE(       "invisible",      "1278300314872578140", false),
+    ONLINE(        "online",         "1278348318283399219", false),
+    IDLE(          "idle",           "1278348298377236595", false),
+    DO_NOT_DISTURB("dnb",            "1278348245319422107", false),
+    INVISIBLE(     "invisible",      "1278348308242497536", false),
+    OFFLINE(       "invisible",      "1278348308242497536", false),
 
     // default emotes
     WHITE_CHECK_MARK(   "white_check_mark"),
@@ -119,7 +119,7 @@ public enum Emote {
     public String getEmote() {
         return String.format(
                 "<%s:%s:%s>",
-                this.animated ? "a" :"",
+                this.animated ? "a" : "",
                 this.emoteName,
                 this.id
         );
