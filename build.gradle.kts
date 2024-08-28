@@ -8,14 +8,12 @@ allprojects {
     apply(plugin = "java")
     apply(plugin = "maven-publish")
 
-    // project settings
     group = "me.kubbidev.renapowered"
     version = "1.1-SNAPSHOT"
 
     java {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-        // include source in when publishing
         withSourcesJar()
     }
 
