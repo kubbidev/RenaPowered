@@ -7,7 +7,6 @@ import me.kubbidev.renapowered.common.storage.implementation.StorageImplementati
 import me.kubbidev.renapowered.common.storage.misc.entity.BaseEntity;
 import me.kubbidev.renapowered.common.util.AsyncInterface;
 
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -59,9 +58,5 @@ public class Storage extends AsyncInterface {
 
     public <T extends BaseEntity> CompletableFuture<Void> saveEntity(T o) {
         return future(() -> this.implementation.saveEntity(o));
-    }
-
-    public <I, T extends BaseEntity> CompletableFuture<Set<I>> getUniqueEntities(Class<T> type) {
-        return future(() -> this.implementation.getUniqueEntities(type));
     }
 }

@@ -182,25 +182,6 @@ public class MongoStorage implements StorageImplementation {
                 new ReplaceOptions().upsert(true));
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <I, T extends BaseEntity> Set<I> getUniqueEntities(Class<T> type) {
-        MongoEntity entity = this.entitiesMap.get(type);
-        Set<I> ids = new HashSet<>();
-
-        MongoCollection<Document> c = this.database.getCollection(this.prefix + entity.getCollectionName());
-        try (MongoCursor<Document> cursor = c.find().iterator()) {
-            while (cursor.hasNext()) {
-                try {
-                    ids.add((I) cursor.next().get(entity.getId()));
-                } catch (IllegalArgumentException e) {
-                    // ignore
-                }
-            }
-        }
-        return ids;
-    }
-
     private static <I, T extends BaseEntity> T buildInstance(MongoEntity entity, Manager<I, T> manager, I id, @Nullable MongoData data)
             throws IllegalAccessException {
 

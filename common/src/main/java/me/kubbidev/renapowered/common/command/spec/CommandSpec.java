@@ -18,12 +18,6 @@ public enum CommandSpec {
 
     SYNC("/%s sync"),
     INFO("/%s info"),
-    IMPORT("/%s import <file>",
-            arg("file", true)
-    ),
-    EXPORT("/%s export <file>",
-            arg("file", false)
-    ),
     RELOAD_CONFIG("/%s reloadconfig"),
     TRANSLATIONS("/%s translations");
 

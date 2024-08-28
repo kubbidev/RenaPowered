@@ -6,8 +6,6 @@ import me.kubbidev.renapowered.common.storage.StorageMetadata;
 import me.kubbidev.renapowered.common.storage.misc.entity.BaseEntity;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.Set;
-
 @ApiStatus.Experimental
 public interface StorageImplementation {
 
@@ -28,8 +26,5 @@ public interface StorageImplementation {
             throws Exception;
 
     <T extends BaseEntity> void saveEntity(T o)
-            throws Exception;
-
-    <I, T extends BaseEntity> Set<I> getUniqueEntities(Class<T> type)
             throws Exception;
 }

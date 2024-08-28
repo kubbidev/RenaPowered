@@ -12,8 +12,6 @@ public enum CommandPermission {
 
     SYNC("sync", Type.NONE),
     INFO("info", Type.NONE),
-    IMPORT("import", Type.NONE),
-    EXPORT("export", Type.NONE),
     RELOAD_CONFIG("reloadconfig", Type.NONE),
     TRANSLATIONS("translations", Type.NONE);
 

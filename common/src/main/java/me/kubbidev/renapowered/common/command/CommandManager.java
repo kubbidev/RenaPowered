@@ -56,8 +56,6 @@ public class CommandManager {
                 .addAll(plugin.getExtraCommands())
                 .add(new SyncCommand())
                 .add(new InfoCommand())
-                .add(new ImportCommand())
-                .add(new ExportCommand())
                 .add(new ReloadConfigCommand())
                 .add(new TranslationsCommand())
                 .build()
