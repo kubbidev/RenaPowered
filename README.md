@@ -1,7 +1,7 @@
 # RenaPowered
 [![license](https://img.shields.io/github/license/kubbidev/RenaPowered?style=for-the-badge&color=b2204c)](LICENSE.txt)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=for-the-badge)](https://github.com/RichardLitt/standard-readme)
-[![discord-banner](https://img.shields.io/discord/1238666127073345646?label=discord&style=for-the-badge&color=7289da)](https://discord.kubbidev.com)
+[![discord-banner](https://img.shields.io/discord/1258062506270654515?label=discord&style=for-the-badge&color=7289da)](https://discord.kubbidev.com)
 
 RenaPowered is a simple but powerful **Discord Bot** used to enhance your Discord experience.
 
